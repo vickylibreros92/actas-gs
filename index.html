@@ -1,0 +1,1149 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#E2582B">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<title>Acta Reuniones Externas · GAM-F-006</title>
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="icon" type="image/png" sizes="32x32" href="favicon-32.png">
+<link rel="apple-touch-icon" sizes="180x180" href="apple-touch-icon.png">
+<meta name="apple-mobile-web-app-title" content="Actas GS">
+<meta name="application-name" content="Actas GS">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="format-detection" content="telephone=no">
+<style>
+  header{display:flex;justify-content:space-between;align-items:center;gap:8px}
+  .net{font-size:11.5px;font-weight:700;background:rgba(255,255,255,.18);border-radius:12px;padding:3px 9px;white-space:nowrap;cursor:pointer;border:0;color:#fff}
+  .net.off{background:#3b3b3b}
+  .ob{border:1px solid var(--line);border-radius:10px;padding:9px 10px;margin:8px 0;display:flex;gap:8px;align-items:flex-start}
+  .ob .t{flex:1;min-width:0}
+  .ob .n{font-weight:700;font-size:13px;word-break:break-all}
+  .ob .s{font-size:12px;color:var(--mut);margin-top:2px}
+  .chip{display:inline-block;font-size:11px;font-weight:700;border-radius:8px;padding:1px 7px;margin-right:4px}
+  .chip.pendiente{background:#fff4e5;color:#b45309}.chip.enviando{background:#e8f0fe;color:#1a56db}.chip.subido{background:#e6f4ea;color:#1a7f37}.chip.error{background:#fde8e8;color:#b91c1c}
+  .ob button{border:0;background:#eef0f3;border-radius:6px;padding:5px 8px;font-size:12px}
+  :root{--o:#E2582B;--o2:#f7d9cd;--ink:#1f2328;--mut:#6b7280;--line:#d9dde3;--bg:#f4f5f7;--card:#fff;--ok:#1a7f37;--warn:#b45309}
+  *{box-sizing:border-box}
+  html,body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.4 system-ui,-apple-system,"Segoe UI",Roboto,Arial,sans-serif;-webkit-text-size-adjust:100%}
+  header{position:sticky;top:0;z-index:5;background:var(--o);color:#fff;padding:calc(env(safe-area-inset-top) + 10px) 16px 10px;box-shadow:0 2px 6px rgba(0,0,0,.15)}
+  header h1{margin:0;font-size:17px;font-weight:700;letter-spacing:.2px}
+  header small{opacity:.9;font-size:12px}
+  main{max-width:720px;margin:0 auto;padding:12px 12px 120px}
+  .card{background:var(--card);border:1px solid var(--line);border-radius:12px;margin:12px 0;overflow:hidden}
+  .card>h2{margin:0;padding:11px 14px;font-size:14px;font-weight:700;text-transform:uppercase;letter-spacing:.3px;background:#e9e9ea;border-bottom:1px solid var(--line);display:flex;align-items:center;gap:8px}
+  .card>h2 .n{background:var(--o);color:#fff;border-radius:50%;width:22px;height:22px;display:inline-grid;place-items:center;font-size:12px}
+  .body{padding:12px 14px}
+  label{display:block;font-size:13px;font-weight:600;color:#374151;margin:10px 0 4px}
+  label:first-child{margin-top:0}
+  input,textarea,select{width:100%;font:inherit;font-size:16px;padding:10px 11px;border:1px solid #c9ced6;border-radius:8px;background:#fff;color:var(--ink)}
+  input:focus,textarea:focus{outline:2px solid var(--o);outline-offset:-1px;border-color:var(--o)}
+  textarea{resize:vertical;min-height:84px}
+  .row{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+  .row3{display:grid;grid-template-columns:1.2fr 1fr 1fr;gap:8px}
+  .item{border:1px solid var(--line);border-radius:10px;padding:10px;margin:10px 0;background:#fcfcfd}
+  .item .hd{display:flex;justify-content:space-between;align-items:center;font-weight:700;font-size:13px;color:var(--o);margin-bottom:6px}
+  .hint{font-size:12.5px;color:var(--mut);margin:6px 0 0}
+  .hint.warn{color:var(--warn);font-weight:600}
+  .btn{appearance:none;border:0;border-radius:10px;padding:12px 16px;font:inherit;font-weight:700;font-size:15px;cursor:pointer;display:inline-flex;align-items:center;justify-content:center;gap:8px}
+  .btn.p{background:var(--o);color:#fff}
+  .btn.s{background:#fff;color:var(--o);border:1.5px solid var(--o)}
+  .btn.g{background:#eef0f3;color:#374151}
+  .btn.d{background:#fff;color:#b91c1c;border:1.5px solid #f1b4b4}
+  .btn.sm{padding:7px 10px;font-size:13px;border-radius:8px}
+  .btn:disabled{opacity:.5}
+  .btns{display:flex;gap:8px;flex-wrap:wrap}
+  .btns .btn{flex:1 1 auto}
+  .thumbs{display:grid;grid-template-columns:repeat(auto-fill,minmax(110px,1fr));gap:10px;margin-top:10px}
+  .thumb{position:relative;border:1px solid var(--line);border-radius:8px;overflow:hidden;background:#fff}
+  .thumb img{display:block;width:100%;height:140px;object-fit:contain;background:#f0f0f0}
+  .thumb .tb{display:flex;justify-content:space-between;padding:4px}
+  .thumb .tb button{border:0;background:#eef0f3;border-radius:6px;padding:5px 7px;font-size:13px}
+  .thumb .pg{position:absolute;top:4px;left:4px;background:rgba(0,0,0,.6);color:#fff;font-size:11px;border-radius:5px;padding:1px 6px}
+  .sigbox{border:1.5px dashed #c9ced6;border-radius:10px;min-height:90px;display:grid;place-items:center;background:#fff;cursor:pointer;margin-top:6px}
+  .sigbox img{max-width:100%;max-height:110px}
+  .sigbox span{color:var(--mut);font-size:14px}
+  .bar{position:fixed;left:0;right:0;bottom:0;z-index:6;background:#fff;border-top:1px solid var(--line);padding:10px 12px calc(env(safe-area-inset-bottom) + 10px);display:flex;gap:8px;box-shadow:0 -2px 8px rgba(0,0,0,.06)}
+  .bar .btn{flex:1;padding:12px 8px;font-size:14.5px}
+  .cnt:empty{display:none}
+  .cnt{background:var(--o);color:#fff;border-radius:10px;padding:0 7px;font-size:12px;line-height:18px}
+  .modal{position:fixed;inset:0;z-index:20;background:#111;display:none;flex-direction:column;color:#fff}
+  .modal.on{display:flex}
+  .modal .top{display:flex;justify-content:space-between;align-items:center;padding:calc(env(safe-area-inset-top) + 8px) 12px 8px;gap:8px}
+  .modal .top b{font-size:15px}
+  .modal .stage{flex:1;position:relative;overflow:hidden;touch-action:none}
+  .modal .foot{padding:10px 12px calc(env(safe-area-inset-bottom) + 10px);display:flex;gap:8px;flex-wrap:wrap}
+  .modal .foot .btn{flex:1 1 auto}
+  #sigModal{background:#fff;color:var(--ink)}
+  #sigModal .stage{margin:0 12px;border:1.5px solid #c9ced6;border-radius:12px;background:#fff}
+  #sigCanvas{position:absolute;inset:0;width:100%;height:100%;touch-action:none}
+  #sigModal .line{position:absolute;left:8%;right:8%;bottom:28%;border-bottom:1.5px solid #9aa1ab;pointer-events:none}
+  #sigModal .x{position:absolute;left:8%;bottom:calc(28% + 4px);color:#9aa1ab;font-size:22px;pointer-events:none}
+  #sigModal .lg{position:absolute;left:0;right:0;bottom:18%;text-align:center;color:#9aa1ab;font-size:13px;pointer-events:none}
+  #scanCanvas{position:absolute;inset:0;width:100%;height:100%}
+  .seg{display:flex;background:#2a2a2a;border-radius:10px;padding:3px;gap:3px;width:100%}
+  .seg button{flex:1;border:0;background:transparent;color:#ddd;padding:9px 4px;border-radius:8px;font:inherit;font-size:13px;font-weight:600}
+  .seg button.on{background:var(--o);color:#fff}
+  .toast{position:fixed;left:50%;bottom:90px;transform:translateX(-50%);background:#111;color:#fff;padding:10px 14px;border-radius:10px;font-size:14px;z-index:40;max-width:90vw;opacity:0;transition:opacity .25s;pointer-events:none}
+  .toast.on{opacity:.95}
+  .busy{position:fixed;inset:0;background:rgba(255,255,255,.75);z-index:30;display:none;place-items:center;font-weight:700}
+  .busy.on{display:grid}
+  .meter{height:6px;background:#eceef1;border-radius:4px;overflow:hidden;margin-top:6px}
+  .meter i{display:block;height:100%;background:var(--o);width:0}
+  #result{display:none}
+  #result.on{display:block}
+  .warnlist{margin:8px 0 0;padding-left:18px;color:var(--warn);font-size:13px}
+  @media (max-width:420px){.row3{grid-template-columns:1fr 1fr}.row3>div:first-child{grid-column:1/-1}}
+</style>
+</head>
+<body>
+<header>
+  <div>
+  <h1>Acta Reuniones Externas</h1>
+  <small>GAM-F-006 · Versión 03 · Gestión Social</small>
+  </div>
+  <button class="net" id="netChip" type="button" style="display:none"></button>
+</header>
+
+<main id="form">
+  <section class="card" id="installCard" style="display:none;border-color:var(--o)"><div class="body" style="display:flex;gap:12px;align-items:flex-start">
+    <img src="apple-touch-icon.png" alt="" width="52" height="52" style="border-radius:12px;flex:0 0 auto">
+    <div style="flex:1;min-width:0">
+      <div style="font-weight:700">Instale la app en su celular</div>
+      <div class="hint" style="margin-top:2px">Queda en la pantalla de inicio, abre a pantalla completa y funciona sin internet.</div>
+      <div id="instAndroid" style="display:none;margin-top:10px"><button class="btn p" id="btnInstall" type="button">📲 Instalar app</button></div>
+      <div id="instAndroidMenu" style="display:none" class="hint"><ol style="padding-left:18px;margin:8px 0 0"><li>Toque el menú <b>⋮</b> del navegador (arriba a la derecha).</li><li>Elija <b>Instalar app</b> o <b>Agregar a pantalla principal</b>.</li></ol></div>
+      <div id="instIOS" style="display:none" class="hint">
+        <ol style="padding-left:18px;margin:8px 0 0;line-height:1.7">
+          <li>Toque <b>Compartir</b> <svg width="16" height="18" viewBox="0 0 16 20" style="vertical-align:-3px" aria-label="ícono compartir"><path d="M8 1v12M4 5l4-4 4 4" fill="none" stroke="#1a73e8" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/><path d="M5 8H2v11h12V8h-3" fill="none" stroke="#1a73e8" stroke-width="1.8" stroke-linejoin="round"/></svg> en la barra de <span id="iosBrowser">Safari</span>.</li>
+          <li>Deslice y elija <b>Agregar a pantalla de inicio</b> <span style="border:1.5px solid #555;border-radius:4px;padding:0 4px;font-weight:700">＋</span>.</li>
+          <li>Toque <b>Agregar</b>.</li>
+        </ol>
+        <p id="iosOld" style="display:none;margin:6px 0 0" class="warn">Si no ve esa opción, abra este enlace en <b>Safari</b>.</p>
+      </div>
+    </div>
+    <button type="button" id="instClose" aria-label="Cerrar" style="border:0;background:none;font-size:20px;color:var(--mut);padding:0 2px;cursor:pointer">✕</button>
+  </div></section>
+  <section class="card"><h2><span class="n">1</span>Datos generales</h2><div class="body">
+    <div class="row">
+      <div><label for="no">Acta No.</label><input id="no" data-k="no" inputmode="numeric" placeholder="Ej: 015"></div>
+      <div><label for="fecha">Fecha</label><div style="display:flex;gap:6px;position:relative"><input id="fecha" data-k="fecha" inputmode="numeric" placeholder="dd/mm/aaaa" maxlength="10" autocomplete="off"><button class="btn g sm" id="fechaCal" type="button" aria-label="Elegir en calendario" style="flex:0 0 auto">📅</button><input type="date" id="fechaPick" tabindex="-1" aria-hidden="true" style="position:absolute;right:0;bottom:0;width:44px;height:40px;opacity:0;pointer-events:none"></div></div>
+    </div>
+    <label for="asunto">Asunto</label><input id="asunto" data-k="asunto">
+    <label for="proyecto">Planta / Proyecto</label><input id="proyecto" data-k="proyecto">
+    <label for="comunidades">Comunidades</label><input id="comunidades" data-k="comunidades">
+    <div class="row">
+      <div><label for="responsable">Responsable</label><input id="responsable" data-k="responsable"></div>
+      <div><label for="lugar">Lugar</label><input id="lugar" data-k="lugar"></div>
+    </div>
+    <div class="row">
+      <div><label for="hini">Hora de inicio</label><input id="hini" data-k="hini" type="time"></div>
+      <div><label for="hfin">Hora de finalización</label><input id="hfin" data-k="hfin" type="time"></div>
+    </div>
+    <label for="objetivo">Objetivo</label><textarea id="objetivo" data-k="objetivo" rows="3"></textarea>
+  </div></section>
+
+  <section class="card"><h2><span class="n">2</span>Temas de la reunión · Orden del día</h2><div class="body" id="temas"></div></section>
+
+  <section class="card"><h2><span class="n">3</span>Desarrollo de los temas</h2><div class="body">
+    <textarea id="desarrollo" data-k="desarrollo" rows="10" placeholder="Escriba aquí el desarrollo de la reunión…"></textarea>
+    <div class="meter"><i id="devMeter"></i></div>
+    <p class="hint" id="devInfo">El formato tiene 29 renglones. Si se usan más, se agregan hojas de continuación con el mismo diseño.</p>
+  </div></section>
+
+  <section class="card"><h2><span class="n">4</span>Compromisos / Acuerdos / Conclusiones</h2><div class="body" id="comps"></div></section>
+
+  <section class="card"><h2><span class="n">5</span>Listados de asistencia (escaneo)</h2><div class="body">
+    <p class="hint" style="margin-top:0">Escanee los listados de asistencia diligenciados en físico: tome una foto de cada hoja y ajuste las esquinas. Las hojas se agregan al final del PDF del acta.</p>
+    <div class="btns" style="margin-top:10px">
+      <button class="btn p" id="btnCam" type="button">📷 Escanear con cámara</button>
+      <button class="btn s" id="btnGal" type="button">🖼️ Desde galería</button>
+    </div>
+    <input type="file" id="fileCam" accept="image/*" capture="environment" hidden>
+    <input type="file" id="fileGal" accept="image/*" multiple hidden>
+    <div class="thumbs" id="thumbs"></div>
+  </div></section>
+
+  <section class="card"><h2><span class="n">6</span>Elaboración y firma</h2><div class="body">
+    <label for="elaborada">Elaborada por</label><input id="elaborada" data-k="elaborada" placeholder="Nombre completo">
+    <label>Firma</label>
+    <div class="sigbox" id="sigBox"><span>✍️ Toque aquí para firmar</span></div>
+    <div class="btns" style="margin-top:8px"><button class="btn g sm" id="sigClear" type="button">Borrar firma</button></div>
+  </div></section>
+
+  <section class="card"><h2><span class="n">7</span>Carpeta donde se guardan las actas</h2><div class="body">
+    <div id="dirView">
+      <p class="hint" id="dirEmpty" style="margin-top:0">Aún no ha elegido una carpeta. Pegue el enlace de la carpeta de SharePoint, OneDrive o Teams donde quiere guardar las actas.</p>
+      <div id="dirSet" style="display:none">
+        <div style="font-weight:700" id="dirName"></div>
+        <div class="hint" id="dirDest" style="word-break:break-all;margin-top:2px"></div>
+      </div>
+      <div class="btns" style="margin-top:10px">
+        <a class="btn s" id="dirOpen" target="_blank" rel="noopener" style="display:none;text-decoration:none">📁 Abrir carpeta</a>
+        <button class="btn g" id="dirEdit" type="button">🔗 Elegir carpeta</button>
+      </div>
+    </div>
+    <div id="dirForm" style="display:none">
+      <label for="dirInUrl">Enlace de la carpeta</label>
+      <input id="dirInUrl" type="url" inputmode="url" placeholder="https://celsia.sharepoint.com/sites/…" autocomplete="off">
+      <p class="hint" id="dirParse"></p>
+      <label for="dirInSitio">Sitio de SharePoint / OneDrive</label>
+      <input id="dirInSitio" inputmode="url" placeholder="https://celsia.sharepoint.com/sites/GestionSocial" autocomplete="off">
+      <label for="dirInRuta">Carpeta dentro del sitio</label>
+      <input id="dirInRuta" placeholder="/Documentos compartidos/Actas 2026" autocomplete="off">
+      <label for="dirInName">Nombre para reconocerla (opcional)</label>
+      <input id="dirInName" placeholder="Ej: Actas Centro-Norte 2026">
+      <p class="hint warn" id="dirErr" style="display:none"></p>
+      <div class="btns" style="margin-top:10px">
+        <button class="btn g" id="dirCancel" type="button">Cancelar</button>
+        <button class="btn d" id="dirDel" type="button">Quitar</button>
+        <button class="btn p" id="dirSave" type="button">Guardar</button>
+      </div>
+    </div>
+
+    <div id="autoBox" style="margin-top:14px;border-top:1px solid var(--line);padding-top:12px">
+      <div style="font-weight:700;font-size:14px">☁️ Subida automática</div>
+      <div id="flowView">
+        <p class="hint" id="flowState" style="margin-top:4px"></p>
+        <div class="btns" style="margin-top:8px"><button class="btn g sm" id="flowEdit" type="button">⚙️ Configurar flujo</button></div>
+      </div>
+      <div id="flowForm" style="display:none">
+        <label for="flowUrl">Dirección del flujo de Power Automate (URL HTTP)</label>
+        <textarea id="flowUrl" rows="3" style="min-height:70px;font-size:13px" placeholder="https://prod-00.westus.logic.azure.com/workflows/…" autocomplete="off" spellcheck="false"></textarea>
+        <p class="hint">La entrega quien administra el flujo. Se guarda solo en este celular.</p>
+        <p class="hint warn" id="flowErr" style="display:none"></p>
+        <div class="btns" style="margin-top:10px">
+          <button class="btn g" id="flowCancel" type="button">Cancelar</button>
+          <button class="btn d" id="flowDel" type="button">Quitar</button>
+          <button class="btn p" id="flowSave" type="button">Guardar</button>
+        </div>
+      </div>
+    </div>
+    <p class="hint">Todo se guarda en este celular, se puede editar sin internet y no se borra con «Nueva acta».</p>
+  </div></section>
+
+  <section class="card" id="result"><h2><span class="n">✓</span>PDF generado</h2><div class="body">
+    <p id="resInfo" style="margin:0"></p>
+    <ul class="warnlist" id="resWarn"></ul>
+    <div class="btns" style="margin-top:12px">
+      <button class="btn p" id="btnShare" type="button">Compartir</button>
+      <button class="btn s" id="btnDown" type="button">Descargar</button>
+      <button class="btn g" id="btnOpen" type="button">Ver</button>
+    </div>
+    <div id="resAuto" style="display:none;margin-top:14px;border-top:1px solid var(--line);padding-top:12px">
+      <button class="btn p" id="btnSend" type="button" style="width:100%">☁️ Enviar a «<span id="resAutoName"></span>»</button>
+      <p class="hint" style="margin-top:6px">Si no hay señal, el acta queda en la bandeja y se sube sola apenas haya conexión.</p>
+    </div>
+    <div id="resDir" style="display:none;margin-top:14px;border-top:1px solid var(--line);padding-top:12px">
+      <div style="font-weight:700;font-size:14px">Guardar en la carpeta de actas</div>
+      <ol class="hint" style="padding-left:18px;margin:6px 0 10px"><li>Toque <b>Descargar</b> para guardar el PDF en el celular.</li><li>Abra la carpeta y use <b>Cargar / Subir</b> para adjuntar el PDF.</li></ol>
+      <a class="btn s" id="resDirOpen" target="_blank" rel="noopener" style="display:flex;text-decoration:none">📁 Abrir <span id="resDirName"></span></a>
+    </div>
+    <p class="hint" id="resNoDir" style="display:none;margin-top:12px">Consejo: elija la carpeta de actas (sección 7) para guardar el acta allí.</p>
+  </div></section>
+
+  <section class="card" id="outbox" style="display:none"><h2><span class="n">☁</span>Bandeja de envío</h2><div class="body">
+    <p class="hint" id="obNet" style="margin-top:0"></p>
+    <div id="obList"></div>
+    <div class="btns" style="margin-top:8px">
+      <button class="btn g sm" id="obRetry" type="button">↻ Reintentar ahora</button>
+      <button class="btn g sm" id="obClean" type="button">Limpiar enviadas</button>
+    </div>
+  </div></section>
+
+  <div class="btns" style="margin-top:6px"><button class="btn d" id="btnNew" type="button">🗑️ Nueva acta (borrar todo)</button></div>
+  <p class="hint" id="appVer" style="text-align:center;margin:14px 0 0"></p>
+  <p style="text-align:center;margin:6px 0 0"><a href="#" id="instShow" style="display:none;color:var(--o);font-size:14px;font-weight:600">📲 Cómo instalar la app en el celular</a></p>
+</main>
+
+<div class="bar">
+  <button class="btn s" id="btnCamBar" type="button">📷 Escanear listado <span id="scanCount" class="cnt"></span></button>
+  <button class="btn p" id="btnPdf" type="button">📄 Generar PDF</button>
+</div>
+
+<!-- Firma -->
+<div class="modal" id="sigModal">
+  <div class="top"><b>Firme dentro del recuadro</b><button class="btn g sm" id="sigCancel" type="button">Cancelar</button></div>
+  <div class="stage" id="sigStage">
+    <canvas id="sigCanvas"></canvas>
+    <div class="x">✕</div><div class="line"></div><div class="lg" id="sigLegend"></div>
+  </div>
+  <div class="foot">
+    <button class="btn g" id="sigReset" type="button">Limpiar</button>
+    <button class="btn p" id="sigOk" type="button">Aceptar firma</button>
+  </div>
+</div>
+
+<!-- Escáner -->
+<div class="modal" id="scanModal">
+  <div class="top"><b>Ajuste las esquinas del documento</b><button class="btn g sm" id="scanCancel" type="button">Cancelar</button></div>
+  <div class="stage" id="scanStage"><canvas id="scanCanvas"></canvas></div>
+  <div class="foot">
+    <div class="seg" id="scanFilter">
+      <button data-f="doc" class="on" type="button">Documento</button>
+      <button data-f="bn" type="button">B/N</button>
+      <button data-f="color" type="button">Color</button>
+    </div>
+    <button class="btn g" id="scanRot" type="button">⟳ Rotar</button>
+    <button class="btn g" id="scanFull" type="button">Hoja completa</button>
+    <button class="btn p" id="scanOk" type="button">Guardar hoja</button>
+  </div>
+</div>
+
+<div class="busy" id="busy"><div id="busyTxt">Procesando…</div></div>
+<div class="toast" id="toast"></div>
+
+<script src="pdf-lib.min.js"></script>
+<script>window.APP_WEB=true;window.APP_VERSION='20261104171257';</script>
+<script src="envio-core.js"></script>
+<script>
+'use strict';
+const $ = s => document.querySelector(s);
+const toast = (m, ms = 2600) => { const t = $('#toast'); t.textContent = m; t.classList.add('on'); clearTimeout(t._h); t._h = setTimeout(() => t.classList.remove('on'), ms); };
+const busy = (on, txt = 'Procesando…') => { $('#busyTxt').textContent = txt; $('#busy').classList.toggle('on', on); };
+
+const MAX_TEMAS = 14, N_COMPS = 6, MAX_COMPS = 20;
+let state = { temas: [], comps: [], firma: null };
+
+/* ---------------- Persistencia (borrador local) ---------------- */
+const idb = { get: k => ENVIO.kvGet(k), set: (k, v) => ENVIO.kvSet(k, v), del: k => ENVIO.kvDel(k) };
+let scans = []; // {id, data(jpeg dataURL), w, h}
+function saveDraft() {
+  const d = { fields: {}, temas: state.temas, comps: state.comps, firma: state.firma };
+  document.querySelectorAll('[data-k]').forEach(el => d.fields[el.dataset.k] = el.value);
+  try { localStorage.setItem('actaGAM006', JSON.stringify(d)); } catch (e) {}
+}
+const saveScans = () => idb.set('scans', scans).catch(() => toast('No se pudo guardar el escaneo en el borrador'));
+async function loadDraft() {
+  try {
+    const d = JSON.parse(localStorage.getItem('actaGAM006') || 'null');
+    if (d) {
+      Object.entries(d.fields || {}).forEach(([k, v]) => { const el = document.querySelector(`[data-k="${k}"]`); if (el) el.value = v; });
+      state.temas = d.temas || []; state.comps = d.comps || []; state.firma = d.firma || null;
+      while (state.temas.length > 1 && temaVacio(state.temas[state.temas.length - 1])) state.temas.pop(); // borradores antiguos con 7 filas
+      while (state.comps.length > 1 && compVacio(state.comps[state.comps.length - 1])) state.comps.pop();
+    }
+  } catch (e) {}
+  try { scans = (await idb.get('scans')) || []; } catch (e) { scans = []; }
+}
+
+/* ---------------- Listas dinámicas ---------------- */
+const temaVacio = t => !t || (!String(t.a || '').trim() && !String(t.r || '').trim());
+function renderTemas(focoUltimo) {
+  const c = $('#temas'); c.innerHTML = '';
+  if (!state.temas.length) state.temas.push({ a: '', r: '' });
+  state.temas.forEach((t, i) => {
+    const div = document.createElement('div'); div.className = 'item';
+    div.innerHTML = `<div class="hd">Tema ${i + 1}<button class="btn d sm" data-del type="button" aria-label="Eliminar tema ${i + 1}">🗑️ Eliminar</button></div>
+      <label>Asunto a tratar</label><input data-f="a">
+      <label>Responsable</label><input data-f="r">`;
+    div.querySelectorAll('input').forEach(inp => { inp.value = t[inp.dataset.f] || ''; inp.oninput = () => { state.temas[i][inp.dataset.f] = inp.value; saveDraft(); }; });
+    div.querySelector('[data-del]').onclick = async () => {
+      if (!temaVacio(t) && !(await ask(`¿Eliminar el tema ${i + 1}${t.a ? ' «' + t.a.slice(0, 40) + '»' : ''}?`, 'Eliminar'))) return;
+      state.temas.splice(i, 1); saveDraft(); renderTemas();
+    };
+    c.appendChild(div);
+  });
+  const n = state.temas.length;
+  const pie = document.createElement('div');
+  pie.innerHTML = `<button class="btn s" id="temaAdd" type="button" style="width:100%" ${n >= MAX_TEMAS ? 'disabled' : ''}>＋ Agregar tema</button>
+    <p class="hint">${n >= MAX_TEMAS ? `Máximo ${MAX_TEMAS} temas (lo que cabe en la tabla del formato).` : n > 7 ? `Con ${n} temas, la tabla del formato se ajusta para que quepan todos en la primera hoja.` : 'El formato tiene 7 filas; puede usar menos o agregar hasta ' + MAX_TEMAS + '.'}</p>`;
+  c.appendChild(pie);
+  pie.querySelector('#temaAdd').onclick = () => { if (state.temas.length >= MAX_TEMAS) return; state.temas.push({ a: '', r: '' }); saveDraft(); renderTemas(true); };
+  if (focoUltimo) { const its = c.querySelectorAll('.item'); const last = its[its.length - 1]; last.scrollIntoView({ behavior: 'smooth', block: 'center' }); last.querySelector('input').focus({ preventScroll: true }); }
+}
+const compVacio = t => !t || !['tarea', 'r', 'plazo'].some(k => String(t[k] || '').trim());
+function renderComps(focoUltimo) {
+  const c = $('#comps'); c.innerHTML = '';
+  if (!state.comps.length) state.comps.push({ tarea: '', r: '', plazo: '' });
+  state.comps.forEach((t, i) => {
+    const div = document.createElement('div'); div.className = 'item';
+    div.innerHTML = `<div class="hd">Compromiso ${i + 1}<button class="btn d sm" data-del type="button" aria-label="Eliminar compromiso ${i + 1}">🗑️ Eliminar</button></div>
+      <label>Tarea</label><textarea rows="2" data-f="tarea" style="min-height:58px"></textarea>
+      <div class="row">
+        <div><label>Responsable</label><input data-f="r"></div>
+        <div><label>Plazo</label><input data-f="plazo" placeholder="dd/mm/aaaa"></div>
+      </div>`;
+    div.querySelectorAll('[data-f]').forEach(inp => { inp.value = t[inp.dataset.f] || ''; inp.oninput = () => { state.comps[i][inp.dataset.f] = inp.value; saveDraft(); }; });
+    div.querySelector('[data-del]').onclick = async () => {
+      if (!compVacio(t) && !(await ask(`¿Eliminar el compromiso ${i + 1}${t.tarea ? ' «' + t.tarea.slice(0, 40) + '»' : ''}?`, 'Eliminar'))) return;
+      state.comps.splice(i, 1); saveDraft(); renderComps();
+    };
+    c.appendChild(div);
+  });
+  const n = state.comps.length;
+  const pie = document.createElement('div');
+  pie.innerHTML = `<button class="btn s" id="compAdd" type="button" style="width:100%" ${n >= MAX_COMPS ? 'disabled' : ''}>＋ Agregar compromiso</button>
+    <p class="hint">${n >= MAX_COMPS ? `Máximo ${MAX_COMPS} compromisos.` : n > N_COMPS ? `Con ${n} compromisos, la tabla del formato se alarga en la hoja 3 y la nota y la firma bajan.` : `El formato tiene ${N_COMPS} filas; puede usar menos o agregar hasta ${MAX_COMPS}.`}</p>`;
+  c.appendChild(pie);
+  pie.querySelector('#compAdd').onclick = () => { if (state.comps.length >= MAX_COMPS) return; state.comps.push({ tarea: '', r: '', plazo: '' }); saveDraft(); renderComps(true); };
+  if (focoUltimo) { const its = c.querySelectorAll('.item'); const last = its[its.length - 1]; last.scrollIntoView({ behavior: 'smooth', block: 'center' }); last.querySelector('textarea').focus({ preventScroll: true }); }
+}
+
+/* ---------------- Formato de datos ---------------- */
+const fmtFecha = v => { if (!v) return ''; const [y, m, d] = v.split('-'); return `${d}/${m}/${y}`; };
+const fmtHora = v => {
+  if (!v) return '';
+  let [h, m] = v.split(':').map(Number); const ap = h >= 12 ? 'p. m.' : 'a. m.'; h = h % 12 || 12;
+  return `${h}:${String(m).padStart(2, '0')} ${ap}`;
+};
+const F = k => (document.querySelector(`[data-k="${k}"]`).value || '').trim();
+
+/* ================================================================
+   GENERACIÓN DEL PDF sobre la plantilla original GAM-F-006
+   Coordenadas en puntos PDF (origen abajo-izquierda, hoja carta 612x792)
+   ================================================================ */
+const L = {
+  // Desarrollo: base de cada renglón (línea de guiones del formato)
+  devP1: [201.1, 182.3, 163.8, 145.1, 126.3, 107.8, 89.0, 70.5],
+  devP2: [641.7, 623.2, 604.5, 585.9, 567.2, 548.4, 529.9, 511.1, 492.6, 473.9, 455.1, 436.6, 417.9, 399.4, 380.6, 361.9, 343.4, 324.6, 306.1, 287.4, 268.8],
+  devX1: 40, devX2: 577.5,
+  temasRows: [[406.4, 431.9], [380.1, 405.6], [353.9, 379.4], [327.6, 353.1], [301.4, 326.9], [275.1, 300.6], [248.8, 274.3]],
+  compRows: [[2, 173.3, 205.3], [2, 145.1, 172.9], [2, 109.5, 144.5], [2, 77.0, 109.0], [3, 624.5, 652.3], [3, 596.2, 624.0]],
+  compNumBase: [192.8, 160.3, 132.1, 96.5, 639.7, 611.5],
+};
+
+async function buildPdf() {
+  const { PDFDocument, StandardFonts, rgb } = PDFLib;
+  const warnings = [];
+  const tplBytes = window.PLANTILLA_B64
+    ? Uint8Array.from(atob(window.PLANTILLA_B64), c => c.charCodeAt(0))
+    : new Uint8Array(await (await fetch('plantilla.pdf')).arrayBuffer());
+  const tpl = await PDFDocument.load(tplBytes);
+  const doc = await PDFDocument.create();
+  const font = await doc.embedFont(StandardFonts.Helvetica);
+  const fontB = await doc.embedFont(StandardFonts.HelveticaBold);
+  const INK = rgb(0, 0, 0);
+
+  // Sanear caracteres que la fuente no soporta (emojis, etc.)
+  const clean = s => {
+    s = String(s || '').replace(/\r/g, '').replace(/\t/g, '    ').replace(/[‘’]/g, "'").replace(/[“”]/g, '"');
+    let out = '';
+    for (const ch of s) { if (ch === '\n') { out += ch; continue; } try { font.encodeText(ch); out += ch; } catch (e) { /* omitir */ } }
+    return out.replace(/ +([.,;:])/g, '$1').replace(/ {2,}/g, ' ');
+  };
+  const W = (t, size, f = font) => f.widthOfTextAtSize(t, size);
+
+  // Parte texto en renglones; widthFor(i) = ancho disponible del renglón i
+  function wrap(text, size, widthFor, f = font) {
+    const lines = []; const paras = clean(text).split('\n');
+    for (const p of paras) {
+      const words = p.split(/ +/); let cur = '';
+      const push = () => { lines.push(cur); cur = ''; };
+      if (!p.trim()) { lines.push(''); continue; }
+      for (let w of words) {
+        if (w === '') continue;
+        const tryLine = cur ? cur + ' ' + w : w;
+        if (W(tryLine, size, f) <= widthFor(lines.length)) { cur = tryLine; continue; }
+        if (cur) push();
+        while (W(w, size, f) > widthFor(lines.length)) { // palabra muy larga
+          let k = w.length; while (k > 1 && W(w.slice(0, k), size, f) > widthFor(lines.length)) k--;
+          lines.push(w.slice(0, k)); w = w.slice(k);
+        }
+        cur = w;
+      }
+      if (cur) push();
+    }
+    while (lines.length && lines[lines.length - 1] === '') lines.pop();
+    return lines;
+  }
+
+  // Escribe texto ajustado a una celda (reduce letra si hace falta)
+  function fitCell(page, text, box, name, o = {}) {
+    text = clean(text).trim(); if (!text) return;
+    const max = o.max || 10, min = o.min || 6, valign = o.valign || 'center';
+    const h = box.yt - box.yb - (o.padV ?? 2) * 2;
+    let size = max, lines, lh;
+    for (; size >= min; size -= 0.5) {
+      lh = size * 1.15;
+      lines = wrap(text, size, i => (i === 0 && o.firstX ? box.x2 - o.firstX : box.x2 - box.x1));
+      if (lines.length * lh - (lh - size) <= h) break;
+    }
+    if (size < min) { size = min; lh = size * 1.15; const maxL = Math.max(1, Math.floor((h + (lh - size)) / lh)); if (lines.length > maxL) { lines = lines.slice(0, maxL); lines[maxL - 1] = lines[maxL - 1].replace(/.{0,2}$/, '…'); warnings.push(`"${name}" no cabe completo en la casilla del formato; se recortó.`); } }
+    const blockH = lines.length * lh - (lh - size);
+    let y;
+    if (valign === 'top') y = (o.firstBase ?? (box.yt - (o.padV ?? 2) - size * 0.8));
+    else y = box.yb + (box.yt - box.yb) / 2 + blockH / 2 - size * 0.8;
+    lines.forEach((ln, i) => {
+      const x = (i === 0 && o.firstX) ? o.firstX : box.x1;
+      const tw = W(ln, size);
+      const xx = o.align === 'center' ? box.x1 + (box.x2 - box.x1 - tw) / 2 : x;
+      page.drawText(ln, { x: xx, y: y - i * lh, size, font: o.bold ? fontB : font, color: INK });
+    });
+  }
+
+  /* ---- Desarrollo: calcular renglones y páginas de continuación ---- */
+  const DEV_SIZE = 10.5;
+  const devLines = wrap(F('desarrollo'), DEV_SIZE, () => L.devX2 - L.devX1);
+  const extraSlots = (() => { const s = [...L.devP2]; let y = L.devP2[L.devP2.length - 1]; while (y - 18.65 >= 78) { y -= 18.65; s.push(+y.toFixed(1)); } return s; })();
+  const cap12 = L.devP1.length + L.devP2.length;
+  let nExtra = 0; if (devLines.length > cap12) nExtra = Math.ceil((devLines.length - cap12) / extraSlots.length);
+
+  /* ---- Ensamblar páginas: 1, [extras], 2, 3 ---- */
+  const [p1] = await doc.copyPages(tpl, [0]); doc.addPage(p1);
+  const extras = [];
+  for (let i = 0; i < nExtra; i++) { const [pe] = await doc.copyPages(tpl, [1]); doc.addPage(pe); extras.push(pe); }
+  const [p2] = await doc.copyPages(tpl, [1]); doc.addPage(p2);
+  const [p3] = await doc.copyPages(tpl, [2]); doc.addPage(p3);
+  const actaPages = doc.getPages().slice();
+  const total = actaPages.length;
+
+  /* ---- Encabezado en todas las hojas del acta ---- */
+  const no = clean(F('no'));
+  actaPages.forEach((pg, idx) => {
+    if (no) { const s = 13; const tw = W(no, s, fontB); pg.drawText(no, { x: Math.max(366.5, 365.5 + (15.5 - tw) / 2), y: 701.2, size: s, font: fontB, color: INK }); }
+    const a = String(idx + 1), b = String(total);
+    pg.drawText(a, { x: 524.3 + (8.9 - W(a, 8)) / 2, y: 682.6, size: 8, font, color: INK });
+    pg.drawText(b, { x: 546.5 + (13.3 - W(b, 8)) / 2, y: 682.6, size: 8, font, color: INK });
+  });
+
+  /* ---- Página 1: datos generales ---- */
+  const one = (txt, x, x2, base, name) => fitCell(p1, txt, { x1: x, x2, yb: base - 7, yt: base + 13 }, name, { max: 10.5, min: 6.5, padV: 0 });
+  one(F('asunto'), 85, 577, 635.5, 'Asunto');
+  one(F('proyecto'), 124, 577, 610.0, 'Planta/Proyecto');
+  one(F('comunidades'), 121, 577, 584.4, 'Comunidades');
+  one(F('responsable'), 116, 304, 558.7, 'Responsable');
+  one(F('lugar'), 351, 577, 558.7, 'Lugar');
+  one(F('fecha'), 79, 213, 533.4, 'Fecha');
+  one(fmtHora(F('hini')), 302, 395, 533.4, 'Hora de inicio');
+  one(fmtHora(F('hfin')), 514, 577, 533.4, 'Hora de finalización');
+  fitCell(p1, F('objetivo'), { x1: 39.5, x2: 576, yb: 472.5, yt: 519 }, 'Objetivo', { max: 10.5, min: 6.5, valign: 'top', firstX: 92, firstBase: 507.9, padV: 1 });
+
+  /* ---- Temas: ≤7 usa la tabla original; 8–14 redibuja la misma tabla con filas más bajas ---- */
+  const temas = state.temas.filter(t => !temaVacio(t)).slice(0, MAX_TEMAS);
+  if (temas.length <= 7) {
+    L.temasRows.forEach(([yb, yt], i) => {
+      const t = temas[i]; if (!t) return;
+      fitCell(p1, t.a, { x1: 53, x2: 428, yb, yt }, `Tema ${i + 1}`, { max: 10.5, min: 6.5 });
+      fitCell(p1, t.r, { x1: 435, x2: 576, yb, yt }, `Responsable tema ${i + 1}`, { max: 10.5, min: 6.5 });
+    });
+  } else {
+    const n = temas.length, TOP = 431.9, BOT = 248.1, rh = (TOP - BOT) / n, blk = rgb(0, 0, 0);
+    // tapa las filas originales (sin tocar los bordes exteriores ni el encabezado)
+    p1.drawRectangle({ x: 34.3, y: 248.9, width: 545.2, height: 183.0, color: rgb(1, 1, 1) });
+    p1.drawRectangle({ x: 430.7, y: 248.9, width: 0.8, height: 183.0, color: blk }); // divisor de columnas
+    const ns = Math.min(11, rh * 0.62);
+    for (let i = 0; i < n; i++) {
+      const yt = TOP - i * rh, yb = yt - rh;
+      if (i > 0) p1.drawRectangle({ x: 34.3, y: yt - 0.4, width: 545.2, height: 0.75, color: blk }); // línea entre filas
+      const num = (i + 1) + '.'; const nb = yb + rh / 2 - ns * 0.36;
+      p1.drawText(num, { x: 39.5, y: nb, size: ns, font: fontB, color: blk });
+      const tx = 39.5 + fontB.widthOfTextAtSize('14.', ns) + 4;
+      fitCell(p1, temas[i].a, { x1: tx, x2: 428, yb: yb + 0.6, yt: yt - 0.6 }, `Tema ${i + 1}`, { max: Math.min(10.5, rh * 0.62), min: 5.5, padV: 0.5 });
+      fitCell(p1, temas[i].r, { x1: 435, x2: 576, yb: yb + 0.6, yt: yt - 0.6 }, `Responsable tema ${i + 1}`, { max: Math.min(10.5, rh * 0.62), min: 5.5, padV: 0.5 });
+    }
+  }
+
+  /* ---- Hojas de continuación: tapar compromisos y prolongar renglones (antes del texto) ---- */
+  extras.forEach(pg => {
+    const white = rgb(1, 1, 1), blk = rgb(0, 0, 0);
+    pg.drawRectangle({ x: 32.5, y: 55, width: 552.5, height: 187.6, color: white });
+    pg.drawLine({ start: { x: 34.05, y: 242.3 }, end: { x: 34.05, y: 61.8 }, thickness: 0.5, color: blk });
+    pg.drawLine({ start: { x: 583.55, y: 242.3 }, end: { x: 583.55, y: 61.8 }, thickness: 0.5, color: blk });
+    pg.drawLine({ start: { x: 33.8, y: 62.05 }, end: { x: 583.8, y: 62.05 }, thickness: 0.5, color: blk });
+  });
+
+  /* ---- Desarrollo sin renglones: se borran las líneas de guiones dentro del recuadro (se conservan marco y título) ---- */
+  const blanco = rgb(1, 1, 1);
+  p1.drawRectangle({ x: 34.6, y: 62.4, width: 548.4, height: 150.6, color: blanco });            // hoja 1: bajo el título hasta el borde inferior
+  [p2, ...extras].forEach(pg => pg.drawRectangle({ x: 34.4, y: 242.4, width: 548.6, height: 409.4, color: blanco })); // hoja 2 y continuación
+
+  /* ---- Desarrollo en renglones ---- */
+  const slots = [];
+  L.devP1.forEach(y => slots.push([p1, y]));
+  extras.forEach(pg => extraSlots.forEach(y => slots.push([pg, y])));
+  L.devP2.forEach(y => slots.push([p2, y]));
+  devLines.forEach((ln, i) => { if (slots[i] && ln) slots[i][0].drawText(ln, { x: L.devX1, y: slots[i][1] + 2.4, size: DEV_SIZE, font, color: INK }); });
+
+  /* ---- Compromisos: ≤6 tabla original; más de 6 la tabla crece en la hoja 3 ---- */
+  const comps = state.comps.filter(c => !compVacio(c)).slice(0, MAX_COMPS);
+  const rows = L.compRows.slice();
+  let shift = 0; // cuánto bajan la nota y el cuadro de firma en la hoja 3
+  if (comps.length > N_COMPS) {
+    const tplP3 = tpl.getPage(2), PITCH = 28.3, TOP = 652.2, k = comps.length - 4; // filas en hoja 3
+    const fila = await doc.embedPage(tplP3, { left: 33, bottom: 595.4, right: 584, top: 624.3 });   // fila 6 original (bordes exactos)
+    const pie = await doc.embedPage(tplP3, { left: 80, bottom: 470, right: 540, top: 575 });        // nota + cuadro de firma originales
+    p3.drawRectangle({ x: 28, y: 40, width: 560, height: 614, color: rgb(1, 1, 1) });               // limpia el cuerpo de la hoja 3
+    rows.length = 4;
+    for (let i = 0; i < k; i++) {
+      const top = TOP - i * PITCH, yb = top - 28.6;
+      p3.drawPage(fila, { x: 33, y: yb });
+      p3.drawRectangle({ x: 52, y: top - 16, width: 30, height: 13.5, color: rgb(1, 1, 1) });     // quita el "6" copiado
+      const num = String(5 + i); p3.drawText(num, { x: 65.6 - W(num, 10) / 2, y: top - 12.6, size: 10, font, color: INK });
+      rows.push([3, top - 27.7, top - 0.3]);
+    }
+    shift = (TOP - k * PITCH) - 595.7;
+    p3.drawPage(pie, { x: 80, y: 470 + shift });
+  }
+  rows.forEach(([pn, yb, yt], i) => {
+    const pg = pn === 2 ? p2 : p3; const c = comps[i]; if (!c) return;
+    fitCell(pg, c.tarea, { x1: 99, x2: 342, yb, yt }, `Tarea ${i + 1}`, { max: 10, min: 6 });
+    fitCell(pg, c.r, { x1: 349, x2: 493, yb, yt }, `Responsable compromiso ${i + 1}`, { max: 10, min: 6 });
+    fitCell(pg, c.plazo, { x1: 499, x2: 581, yb, yt }, `Plazo ${i + 1}`, { max: 10, min: 6, align: 'center' });
+  });
+
+  /* ---- Página 3: elaborada por y firma ---- */
+  fitCell(p3, F('elaborada'), { x1: 207, x2: 524, yb: 496.9 + shift, yt: 515.6 + shift }, 'Elaborada por', { max: 10, min: 6 });
+  if (state.firma) {
+    const img = await doc.embedPng(state.firma);
+    const bx = { x: 206, y: 478.3 + shift, w: 318, h: 17.4 };
+    let h = bx.h, w = img.width * h / img.height; if (w > bx.w) { w = bx.w; h = img.height * w / img.width; }
+    p3.drawImage(img, { x: bx.x, y: bx.y + (bx.h - h) / 2, width: w, height: h });
+  } else warnings.push('El acta no tiene firma.');
+
+  /* ---- Anexos: listado de asistencia ---- */
+  if (scans.length) {
+    for (const s of scans) {
+      const img = await doc.embedJpg(s.data);
+      const land = img.width > img.height;
+      const PW = land ? 792 : 612, PH = land ? 612 : 792, m = 18;
+      const pg = doc.addPage([PW, PH]);
+      const sc = Math.min((PW - 2 * m) / img.width, (PH - 2 * m) / img.height);
+      const w = img.width * sc, h = img.height * sc;
+      pg.drawImage(img, { x: (PW - w) / 2, y: (PH - h) / 2, width: w, height: h });
+    }
+  } else {
+    warnings.push('No se ha escaneado ningún listado de asistencia.');
+  }
+
+  const now = new Date();
+  doc.setTitle(`Acta Reuniones Externas No. ${no || 's/n'}`);
+  doc.setSubject(clean(F('asunto')));
+  doc.setAuthor(clean(F('elaborada')) || 'Gestión Social');
+  doc.setKeywords(['GAM-F-006', 'Acta reuniones externas']);
+  doc.setCreator('App Acta GAM-F-006');
+  doc.setCreationDate(now); doc.setModificationDate(now);
+  if (devLines.length > cap12) { /* informativo */ }
+  const bytes = await doc.save();
+  return { bytes, warnings, total, annex: scans.length, devLines: devLines.length, nExtra };
+}
+
+/* ---------------- Medidor de renglones del desarrollo ---------------- */
+let measureFont = null;
+async function updateDevMeter() {
+  try {
+    if (!measureFont) { const d = await PDFLib.PDFDocument.create(); measureFont = await d.embedFont(PDFLib.StandardFonts.Helvetica); }
+    const txt = $('#desarrollo').value; const size = 10.5, maxW = 537.5;
+    let n = 0;
+    for (const p of txt.replace(/\r/g, '').split('\n')) {
+      if (!p.trim()) { n++; continue; }
+      let cur = ''; let cnt = 1;
+      for (const w of p.split(/ +/)) { if (!w) continue; let t = cur ? cur + ' ' + w : w; let ww = 0; try { ww = measureFont.widthOfTextAtSize(t, size); } catch (e) { ww = t.length * 5.5; } if (ww <= maxW) cur = t; else { cnt++; cur = w; } }
+      n += cnt;
+    }
+    if (!txt.trim()) n = 0;
+    const cap = 29, per = 31;
+    const extra = n > cap ? Math.ceil((n - cap) / per) : 0;
+    $('#devMeter').style.width = Math.min(100, n / cap * 100) + '%';
+    $('#devInfo').textContent = extra ? `Usa ${n} renglones: se agregará${extra > 1 ? 'n' : ''} ${extra} hoja${extra > 1 ? 's' : ''} de continuación.` : `Usa ${n} de 29 renglones del formato.`;
+    $('#devInfo').classList.toggle('warn', extra > 0);
+  } catch (e) {}
+}
+
+/* ---------------- Firma ---------------- */
+const sig = { cv: null, ctx: null, drawing: false, pts: [], dirty: false };
+function openSig() {
+  $('#sigModal').classList.add('on');
+  const n = F('elaborada'); $('#sigLegend').textContent = n ? n : 'Firma';
+  requestAnimationFrame(() => {
+    const cv = $('#sigCanvas'), r = cv.getBoundingClientRect(), dpr = Math.max(1, window.devicePixelRatio || 1);
+    cv.width = Math.round(r.width * dpr); cv.height = Math.round(r.height * dpr);
+    const ctx = cv.getContext('2d'); ctx.lineCap = 'round'; ctx.lineJoin = 'round'; ctx.strokeStyle = '#0b1f5c'; ctx.fillStyle = '#0b1f5c';
+    sig.cv = cv; sig.ctx = ctx; sig.dpr = dpr; sig.dirty = false;
+  });
+}
+function sigPos(e) { const r = sig.cv.getBoundingClientRect(); return { x: (e.clientX - r.left) * sig.dpr, y: (e.clientY - r.top) * sig.dpr, p: e.pressure || 0.5 }; }
+function sigDown(e) { e.preventDefault(); sig.cv.setPointerCapture(e.pointerId); sig.drawing = true; const p = sigPos(e); sig.pts = [p]; sig.ctx.beginPath(); sig.ctx.arc(p.x, p.y, 1.4 * sig.dpr, 0, Math.PI * 2); sig.ctx.fill(); sig.dirty = true; }
+function sigMove(e) {
+  if (!sig.drawing) return; e.preventDefault();
+  const evs = e.getCoalescedEvents ? e.getCoalescedEvents() : [e];
+  for (const ev of evs) {
+    const p = sigPos(ev); const pts = sig.pts; pts.push(p);
+    if (pts.length === 2) { const a = pts[0], m = { x: (a.x + p.x) / 2, y: (a.y + p.y) / 2 }; sig.ctx.lineWidth = 2.6 * sig.dpr; sig.ctx.beginPath(); sig.ctx.moveTo(a.x, a.y); sig.ctx.lineTo(m.x, m.y); sig.ctx.stroke(); continue; }
+    const a = pts[pts.length - 3], b = pts[pts.length - 2], c = pts[pts.length - 1];
+    const m1 = { x: (a.x + b.x) / 2, y: (a.y + b.y) / 2 }, m2 = { x: (b.x + c.x) / 2, y: (b.y + c.y) / 2 };
+    const sp = Math.hypot(c.x - a.x, c.y - a.y) / sig.dpr; const lw = Math.max(1.6, Math.min(3.4, 3.6 - sp * 0.06)) * sig.dpr;
+    const ctx = sig.ctx; ctx.lineWidth = lw; ctx.beginPath(); ctx.moveTo(m1.x, m1.y); ctx.quadraticCurveTo(b.x, b.y, m2.x, m2.y); ctx.stroke();
+  }
+}
+function sigUp() { sig.drawing = false; }
+function sigExport() {
+  const cv = sig.cv, ctx = sig.ctx, { width: w, height: h } = cv; const d = ctx.getImageData(0, 0, w, h).data;
+  let x1 = w, y1 = h, x2 = 0, y2 = 0;
+  for (let y = 0; y < h; y++) for (let x = 0; x < w; x++) if (d[(y * w + x) * 4 + 3] > 10) { if (x < x1) x1 = x; if (x > x2) x2 = x; if (y < y1) y1 = y; if (y > y2) y2 = y; }
+  if (x2 <= x1) return null;
+  const pad = Math.round(4 * sig.dpr); x1 = Math.max(0, x1 - pad); y1 = Math.max(0, y1 - pad); x2 = Math.min(w - 1, x2 + pad); y2 = Math.min(h - 1, y2 + pad);
+  const out = document.createElement('canvas'); const sc = Math.min(1, 900 / (x2 - x1 + 1)); out.width = Math.round((x2 - x1 + 1) * sc); out.height = Math.round((y2 - y1 + 1) * sc);
+  out.getContext('2d').drawImage(cv, x1, y1, x2 - x1 + 1, y2 - y1 + 1, 0, 0, out.width, out.height);
+  return out.toDataURL('image/png');
+}
+function renderSig() { const b = $('#sigBox'); b.innerHTML = state.firma ? `<img alt="Firma" src="${state.firma}">` : '<span>✍️ Toque aquí para firmar</span>'; }
+
+/* ---------------- Escáner de documentos ---------------- */
+const scan = { img: null, cv: null, corners: null, filter: 'doc', view: null, drag: -1 };
+function loadImageFile(file) {
+  return new Promise((res, rej) => {
+    const url = URL.createObjectURL(file); const im = new Image();
+    im.onload = () => {
+      const MAX = 2400; const s = Math.min(1, MAX / Math.max(im.naturalWidth, im.naturalHeight));
+      const c = document.createElement('canvas'); c.width = Math.round(im.naturalWidth * s); c.height = Math.round(im.naturalHeight * s);
+      c.getContext('2d').drawImage(im, 0, 0, c.width, c.height); URL.revokeObjectURL(url); res(c);
+    };
+    im.onerror = () => { URL.revokeObjectURL(url); rej(new Error('Imagen no válida')); };
+    im.src = url;
+  });
+}
+const scanQueue = [];
+async function enqueueFiles(files) { for (const f of files) scanQueue.push(f); if (!$('#scanModal').classList.contains('on')) nextScan(); }
+async function nextScan() {
+  const f = scanQueue.shift(); if (!f) return;
+  busy(true, 'Cargando imagen…');
+  try { scan.img = await loadImageFile(f); } catch (e) { busy(false); toast('No se pudo abrir la imagen'); return nextScan(); }
+  busy(false);
+  scan.corners = autoCorners(scan.img);
+  $('#scanModal').classList.add('on');
+  requestAnimationFrame(drawScan);
+}
+function fullCorners(c) { return [{ x: 0, y: 0 }, { x: c.width, y: 0 }, { x: c.width, y: c.height }, { x: 0, y: c.height }]; }
+// Detección simple de la hoja (zona clara sobre fondo más oscuro)
+function autoCorners(c) {
+  try {
+    const S = 160, sc = S / Math.max(c.width, c.height), w = Math.round(c.width * sc), h = Math.round(c.height * sc);
+    const t = document.createElement('canvas'); t.width = w; t.height = h; const x = t.getContext('2d'); x.drawImage(c, 0, 0, w, h);
+    const d = x.getImageData(0, 0, w, h).data; const g = new Float32Array(w * h); let sum = 0;
+    for (let i = 0; i < w * h; i++) { g[i] = 0.299 * d[i * 4] + 0.587 * d[i * 4 + 1] + 0.114 * d[i * 4 + 2]; sum += g[i]; }
+    // umbral de Otsu
+    const hist = new Array(256).fill(0); g.forEach(v => hist[v | 0]++);
+    let best = 0, thr = 128, sB = 0, wB = 0; const tot = w * h; let sAll = 0; for (let i = 0; i < 256; i++) sAll += i * hist[i];
+    for (let i = 0; i < 256; i++) { wB += hist[i]; if (!wB) continue; const wF = tot - wB; if (!wF) break; sB += i * hist[i]; const mB = sB / wB, mF = (sAll - sB) / wF; const v = wB * wF * (mB - mF) ** 2; if (v > best) { best = v; thr = i; } }
+    // esquinas extremas de la zona clara
+    let tl = null, tr = null, br = null, bl = null, a = Infinity, b = -Infinity, cc = -Infinity, dd = Infinity, cnt = 0;
+    for (let yy = 0; yy < h; yy++) for (let xx = 0; xx < w; xx++) {
+      if (g[yy * w + xx] <= thr) continue; cnt++;
+      const s1 = xx + yy, s2 = xx - yy;
+      if (s1 < a) { a = s1; tl = { x: xx, y: yy }; } if (s2 > b) { b = s2; tr = { x: xx, y: yy }; }
+      if (s1 > cc) { cc = s1; br = { x: xx, y: yy }; } if (s2 < dd) { dd = s2; bl = { x: xx, y: yy }; }
+    }
+    const area = q => Math.abs((q[0].x * q[1].y - q[1].x * q[0].y) + (q[1].x * q[2].y - q[2].x * q[1].y) + (q[2].x * q[3].y - q[3].x * q[2].y) + (q[3].x * q[0].y - q[0].x * q[3].y)) / 2;
+    const q = [tl, tr, br, bl];
+    if (!tl || cnt < tot * 0.15) throw 0;
+    const ar = area(q) / tot;
+    if (ar < 0.2 || ar > 0.97) throw 0;
+    return q.map(p => ({ x: p.x / sc, y: p.y / sc }));
+  } catch (e) {
+    const m = 0.04; return [{ x: c.width * m, y: c.height * m }, { x: c.width * (1 - m), y: c.height * m }, { x: c.width * (1 - m), y: c.height * (1 - m) }, { x: c.width * m, y: c.height * (1 - m) }];
+  }
+}
+function drawScan() {
+  const cv = $('#scanCanvas'), r = cv.getBoundingClientRect(), dpr = Math.max(1, window.devicePixelRatio || 1);
+  cv.width = Math.round(r.width * dpr); cv.height = Math.round(r.height * dpr);
+  const ctx = cv.getContext('2d'); const im = scan.img; const pad = 22 * dpr;
+  const s = Math.min((cv.width - 2 * pad) / im.width, (cv.height - 2 * pad) / im.height);
+  const ox = (cv.width - im.width * s) / 2, oy = (cv.height - im.height * s) / 2;
+  scan.view = { s, ox, oy, dpr };
+  ctx.fillStyle = '#111'; ctx.fillRect(0, 0, cv.width, cv.height);
+  ctx.drawImage(im, ox, oy, im.width * s, im.height * s);
+  const P = scan.corners.map(p => ({ x: ox + p.x * s, y: oy + p.y * s }));
+  ctx.save(); ctx.fillStyle = 'rgba(0,0,0,.45)'; ctx.beginPath(); ctx.rect(0, 0, cv.width, cv.height); ctx.moveTo(P[0].x, P[0].y); for (let i = 3; i >= 0; i--) ctx.lineTo(P[i].x, P[i].y); ctx.closePath(); ctx.fill('evenodd'); ctx.restore();
+  ctx.strokeStyle = '#E2582B'; ctx.lineWidth = 2.5 * dpr; ctx.beginPath(); P.forEach((p, i) => i ? ctx.lineTo(p.x, p.y) : ctx.moveTo(p.x, p.y)); ctx.closePath(); ctx.stroke();
+  P.forEach(p => { ctx.beginPath(); ctx.arc(p.x, p.y, 13 * dpr, 0, Math.PI * 2); ctx.fillStyle = 'rgba(226,88,43,.35)'; ctx.fill(); ctx.lineWidth = 2.5 * dpr; ctx.strokeStyle = '#fff'; ctx.stroke(); });
+}
+function scanPt(e) { const cv = $('#scanCanvas'), r = cv.getBoundingClientRect(), v = scan.view; return { x: ((e.clientX - r.left) * v.dpr - v.ox) / v.s, y: ((e.clientY - r.top) * v.dpr - v.oy) / v.s }; }
+function solve(A, b) { // Gauss
+  const n = b.length; for (let i = 0; i < n; i++) { let m = i; for (let k = i + 1; k < n; k++) if (Math.abs(A[k][i]) > Math.abs(A[m][i])) m = k; [A[i], A[m]] = [A[m], A[i]]; [b[i], b[m]] = [b[m], b[i]];
+    for (let k = i + 1; k < n; k++) { const f = A[k][i] / A[i][i]; for (let j = i; j < n; j++) A[k][j] -= f * A[i][j]; b[k] -= f * b[i]; } }
+  const x = new Array(n); for (let i = n - 1; i >= 0; i--) { let s = b[i]; for (let j = i + 1; j < n; j++) s -= A[i][j] * x[j]; x[i] = s / A[i][i]; } return x;
+}
+function homography(src, dst) { // mapea dst -> src
+  const A = [], b = [];
+  for (let i = 0; i < 4; i++) { const { x, y } = dst[i], { x: u, y: v } = src[i];
+    A.push([x, y, 1, 0, 0, 0, -u * x, -u * y]); b.push(u); A.push([0, 0, 0, x, y, 1, -v * x, -v * y]); b.push(v); }
+  const h = solve(A, b); return [...h, 1];
+}
+function warpAndFilter() {
+  const q = scan.corners, d = (a, b) => Math.hypot(a.x - b.x, a.y - b.y);
+  let W = Math.max(d(q[0], q[1]), d(q[3], q[2])), H = Math.max(d(q[0], q[3]), d(q[1], q[2]));
+  const lim = 2000 / Math.max(W, H); if (lim < 1) { W *= lim; H *= lim; } W = Math.round(W); H = Math.round(H);
+  const src = scan.img.getContext('2d').getImageData(0, 0, scan.img.width, scan.img.height); const sd = src.data, sw = src.width, sh = src.height;
+  const out = document.createElement('canvas'); out.width = W; out.height = H; const octx = out.getContext('2d'); const od = octx.createImageData(W, H); const o = od.data;
+  const h = homography(q, [{ x: 0, y: 0 }, { x: W, y: 0 }, { x: W, y: H }, { x: 0, y: H }]);
+  for (let y = 0; y < H; y++) for (let x = 0; x < W; x++) {
+    const z = h[6] * x + h[7] * y + 1, u = (h[0] * x + h[1] * y + h[2]) / z, v = (h[3] * x + h[4] * y + h[5]) / z;
+    const x0 = Math.max(0, Math.min(sw - 2, u | 0)), y0 = Math.max(0, Math.min(sh - 2, v | 0)), fx = Math.min(1, Math.max(0, u - x0)), fy = Math.min(1, Math.max(0, v - y0));
+    const i00 = (y0 * sw + x0) * 4, i10 = i00 + 4, i01 = i00 + sw * 4, i11 = i01 + 4, oi = (y * W + x) * 4;
+    for (let c = 0; c < 3; c++) o[oi + c] = (sd[i00 + c] * (1 - fx) + sd[i10 + c] * fx) * (1 - fy) + (sd[i01 + c] * (1 - fx) + sd[i11 + c] * fx) * fy;
+    o[oi + 3] = 255;
+  }
+  octx.putImageData(od, 0, 0);
+  if (scan.filter !== 'color') {
+    // Fondo estimado (iluminación) para dejar la hoja blanca
+    const small = document.createElement('canvas'); small.width = Math.max(8, Math.round(W / 24)); small.height = Math.max(8, Math.round(H / 24));
+    const sctx = small.getContext('2d'); sctx.imageSmoothingQuality = 'high'; sctx.drawImage(out, 0, 0, small.width, small.height);
+    const bg = document.createElement('canvas'); bg.width = W; bg.height = H; const bctx = bg.getContext('2d'); bctx.imageSmoothingEnabled = true; bctx.imageSmoothingQuality = 'high'; bctx.filter = 'blur(2px)'; bctx.drawImage(small, 0, 0, W, H);
+    const bd = bctx.getImageData(0, 0, W, H).data;
+    for (let i = 0; i < o.length; i += 4) {
+      const g = 0.299 * o[i] + 0.587 * o[i + 1] + 0.114 * o[i + 2], bgv = Math.max(40, 0.299 * bd[i] + 0.587 * bd[i + 1] + 0.114 * bd[i + 2]);
+      let r = Math.min(255, g / bgv * 255);
+      if (scan.filter === 'bn') r = r < 175 ? 0 : 255; else r = 255 * Math.pow(r / 255, 2.2);
+      r = Math.max(0, Math.min(255, r)); o[i] = o[i + 1] = o[i + 2] = r;
+    }
+    octx.putImageData(od, 0, 0);
+  }
+  return out;
+}
+function rotateScan() {
+  const c = scan.img, r = document.createElement('canvas'); r.width = c.height; r.height = c.width;
+  const x = r.getContext('2d'); x.translate(r.width, 0); x.rotate(Math.PI / 2); x.drawImage(c, 0, 0);
+  scan.corners = scan.corners.map(p => ({ x: c.height - p.y, y: p.x }));
+  scan.corners = [scan.corners[3], scan.corners[0], scan.corners[1], scan.corners[2]];
+  scan.img = r; drawScan();
+}
+function renderThumbs() {
+  const c = $('#thumbs'); c.innerHTML = '';
+  $('#scanCount').textContent = scans.length ? scans.length : '';
+  scans.forEach((s, i) => {
+    const d = document.createElement('div'); d.className = 'thumb';
+    d.innerHTML = `<span class="pg">Hoja ${i + 1}</span><img alt="Hoja ${i + 1}" src="${s.data}"><div class="tb"><button data-a="up" aria-label="Mover antes">◀</button><button data-a="dn" aria-label="Mover después">▶</button><button data-a="del" aria-label="Eliminar">🗑️</button></div>`;
+    d.querySelectorAll('button').forEach(b => b.onclick = async () => {
+      const a = b.dataset.a;
+      if (a === 'del') { if (!(await ask(`¿Eliminar la hoja ${i + 1}?`, 'Eliminar'))) return; scans.splice(i, 1); }
+      if (a === 'up' && i > 0) [scans[i - 1], scans[i]] = [scans[i], scans[i - 1]];
+      if (a === 'dn' && i < scans.length - 1) [scans[i + 1], scans[i]] = [scans[i], scans[i + 1]];
+      renderThumbs(); saveScans();
+    });
+    c.appendChild(d);
+  });
+}
+
+/* ---------------- Carpeta de destino (elegida por quien diligencia) ---------------- */
+const DIR_KEY = 'actaGAM006_carpeta';
+const FLOW_KEY = 'actaGAM006_flujo';
+const lsGet = k => { try { return JSON.parse(localStorage.getItem(k) || 'null'); } catch (e) { return null; } };
+const lsSet = (k, v) => { try { v == null ? localStorage.removeItem(k) : localStorage.setItem(k, JSON.stringify(v)); return true; } catch (e) { toast('No se pudo guardar en este navegador'); return false; } };
+const getDir = () => lsGet(DIR_KEY);
+const getFlow = () => (lsGet(FLOW_KEY) || {}).url || '';
+const AUTO_OK = () => !IN_CLAUDE; // en claude.ai la página no puede conectarse a otros sitios
+const esc = s => String(s || '').replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
+
+// Interpreta el enlace de una carpeta de SharePoint / OneDrive → sitio + ruta
+function parseCarpeta(texto) {
+  const m = String(texto || '').match(/https?:\/\/\S+/i); if (!m) return { error: 'Pegue un enlace que empiece por https://' };
+  let u; try { u = new URL(m[0]); } catch (e) { return { error: 'El enlace no es válido.' }; }
+  const out = { url: u.href };
+  if (!/sharepoint\.com$/i.test(u.hostname)) { out.aviso = 'Este enlace no es de SharePoint/OneDrive: se podrá abrir, pero la subida automática solo funciona con SharePoint, OneDrive o Teams.'; return out; }
+  if (/^\/:[a-z]:\//i.test(u.pathname)) { out.aviso = 'Es un enlace “para compartir”: abra la carpeta en el navegador y copie la dirección de la barra, o escriba abajo el sitio y la carpeta.'; return out; }
+  let path = u.searchParams.get('id') || u.searchParams.get('RootFolder') || decodeURIComponent(u.pathname);
+  path = path.replace(/\/Forms\/[^/]+\.aspx$/i, '').replace(/\/[^/]+\.aspx$/i, '').replace(/\/+$/, '');
+  const s = path.match(/^\/(sites|teams|personal)\/[^/]+/i);
+  out.sitio = u.origin + (s ? s[0] : '');
+  out.ruta = (s ? path.slice(s[0].length) : path) || '/';
+  return out;
+}
+function destTxt(d) { return d && d.sitio ? `${d.sitio.replace(/^https:\/\//, '')} › ${d.ruta}` : (d ? d.url : ''); }
+function renderDir() {
+  const d = getDir(), flow = getFlow();
+  $('#dirEmpty').style.display = d ? 'none' : '';
+  $('#dirSet').style.display = d ? '' : 'none';
+  $('#dirOpen').style.display = d && d.url ? '' : 'none';
+  $('#dirEdit').textContent = d ? '✏️ Cambiar carpeta' : '🔗 Elegir carpeta';
+  if (d) { $('#dirName').textContent = d.name || 'Carpeta de actas'; $('#dirDest').textContent = destTxt(d); if (d.url) { $('#dirOpen').href = d.url; $('#resDirOpen').href = d.url; } $('#resDirName').textContent = d.name || 'carpeta de actas'; $('#resAutoName').textContent = d.name || 'carpeta de actas'; }
+  // subida automática
+  $('#autoBox').style.display = AUTO_OK() ? '' : 'none';
+  const listo = AUTO_OK() && flow && d && d.sitio;
+  $('#flowState').innerHTML = !flow ? 'No configurada. Con un flujo de Power Automate, las actas se suben solas a la carpeta, aun si se generan sin señal.'
+    : (d && d.sitio ? '✅ Activa: las actas se subirán a la carpeta elegida.' : '⚠️ Flujo configurado, pero falta elegir una carpeta de SharePoint/OneDrive con sitio y ruta.');
+  $('#flowEdit').textContent = flow ? '⚙️ Cambiar flujo' : '⚙️ Configurar flujo';
+  $('#resAuto').style.display = listo ? '' : 'none';
+  $('#resDir').style.display = !listo && d && d.url ? '' : 'none';
+  $('#resNoDir').style.display = d ? 'none' : '';
+}
+function dirForm(on) {
+  $('#dirView').style.display = on ? 'none' : ''; $('#dirForm').style.display = on ? '' : 'none'; $('#dirErr').style.display = 'none';
+  const d = getDir(); $('#dirDel').style.display = d ? '' : 'none';
+  if (on) { $('#dirInUrl').value = d ? d.url || '' : ''; $('#dirInSitio').value = d ? d.sitio || '' : ''; $('#dirInRuta').value = d ? d.ruta || '' : ''; $('#dirInName').value = d ? d.name || '' : ''; $('#dirParse').textContent = ''; $('#dirInUrl').focus(); }
+}
+function onDirUrl() {
+  const p = parseCarpeta($('#dirInUrl').value);
+  if (p.sitio) { $('#dirInSitio').value = p.sitio; $('#dirInRuta').value = p.ruta; }
+  $('#dirParse').textContent = p.error ? '' : (p.aviso || (p.sitio ? '✓ Sitio y carpeta detectados. Revíselos abajo.' : ''));
+  $('#dirParse').classList.toggle('warn', !!p.aviso);
+}
+function saveDir() {
+  const err = t => { $('#dirErr').textContent = t; $('#dirErr').style.display = ''; };
+  const p = parseCarpeta($('#dirInUrl').value);
+  let sitio = $('#dirInSitio').value.trim().replace(/\/+$/, ''), ruta = $('#dirInRuta').value.trim();
+  if (p.error && !sitio) return err('Pegue el enlace de la carpeta o escriba el sitio y la carpeta.');
+  if (sitio) { try { const u = new URL(sitio); if (u.protocol !== 'https:') throw 0; sitio = u.origin + u.pathname.replace(/\/+$/, ''); } catch (e) { return err('El sitio debe ser una dirección https://…'); } }
+  if (sitio && !ruta) return err('Escriba la carpeta dentro del sitio (por ejemplo /Documentos compartidos/Actas).');
+  if (ruta && !ruta.startsWith('/')) ruta = '/' + ruta;
+  const d = { url: p.url || (sitio ? sitio + ruta : ''), sitio, ruta, name: $('#dirInName').value.trim() };
+  if (!lsSet(DIR_KEY, d)) return;
+  dirForm(false); renderDir(); toast('Carpeta guardada');
+}
+function flowForm(on) {
+  $('#flowView').style.display = on ? 'none' : ''; $('#flowForm').style.display = on ? '' : 'none'; $('#flowErr').style.display = 'none';
+  $('#flowDel').style.display = getFlow() ? '' : 'none';
+  if (on) { $('#flowUrl').value = getFlow(); $('#flowUrl').focus(); }
+}
+function saveFlow() {
+  const m = $('#flowUrl').value.replace(/\s+/g, '').match(/https?:\/\/\S+/i);
+  const err = t => { $('#flowErr').textContent = t; $('#flowErr').style.display = ''; };
+  if (!m) return err('Pegue la dirección HTTP del flujo (empieza por https://).');
+  try { const u = new URL(m[0]); if (u.protocol !== 'https:' && u.hostname !== 'localhost') throw 0; } catch (e) { return err('La dirección no es válida (debe empezar por https://).'); }
+  if (!lsSet(FLOW_KEY, { url: m[0] })) return;
+  flowForm(false); renderDir(); toast('Flujo guardado');
+}
+
+/* ---------------- Bandeja de envío (sube sola al haber conexión) ---------------- */
+function bytesToB64(bytes) { let s = ''; for (let i = 0; i < bytes.length; i += 0x8000) s += String.fromCharCode.apply(null, bytes.subarray(i, i + 0x8000)); return btoa(s); }
+async function enviarActa() {
+  const d = getDir(), flow = getFlow();
+  if (!lastPdf || !flow || !d || !d.sitio) { toast('Configure la carpeta y el flujo en la sección 7'); return; }
+  const base = lastPdf.name.replace(/\.pdf$/i, '');
+  const lista = await ENVIO.todos().catch(() => []);
+  if (lista.some(x => x.base === base && x.estado !== 'error') && !(await ask(`El acta «${base}» ya está en la bandeja. ¿Enviarla otra vez?`, 'Enviar de nuevo'))) return;
+  const ahora = new Date(), hh = String(ahora.getHours()).padStart(2, '0') + String(ahora.getMinutes()).padStart(2, '0') + String(ahora.getSeconds()).padStart(2, '0');
+  const nombre = `${base}_${hh}.pdf`;
+  const bytes = new Uint8Array(await lastPdf.arrayBuffer());
+  const payload = JSON.stringify({
+    nombreArchivo: nombre, sitio: d.sitio, carpeta: d.ruta, contenidoBase64: bytesToB64(bytes),
+    acta: { numero: F('no'), fecha: F('fecha'), asunto: F('asunto'), proyecto: F('proyecto'), responsable: F('responsable'), lugar: F('lugar'), elaboradaPor: F('elaborada') },
+    generado: ahora.toISOString(), origen: 'App Acta GAM-F-006'
+  });
+  const it = { id: Date.now() + '-' + Math.random().toString(36).slice(2, 7), base, nombre, destino: d.name || destTxt(d), flowUrl: flow, payload, estado: 'pendiente', intentos: 0, creado: Date.now(), kb: Math.round(bytes.length / 1024) };
+  try { await ENVIO.guardar(it); } catch (e) { toast('No se pudo guardar el acta en la bandeja (¿memoria llena?)', 5000); return; }
+  pedirSyncFondo();
+  await renderOutbox();
+  $('#outbox').scrollIntoView({ behavior: 'smooth', block: 'center' });
+  toast(navigator.onLine ? 'Enviando acta…' : 'Sin señal: el acta se subirá sola al recuperar la conexión', 4000);
+  procesarBandeja();
+}
+let procesando = false;
+async function procesarBandeja(forzar) {
+  if (!AUTO_OK() || procesando) return; procesando = true;
+  try { await ENVIO.procesar(forzar); } catch (e) { console.warn(e); }
+  procesando = false; renderOutbox();
+}
+function pedirSyncFondo() {
+  try { if (navigator.serviceWorker && navigator.serviceWorker.controller) navigator.serviceWorker.ready.then(r => r.sync && r.sync.register('subir-actas')).catch(() => {}); } catch (e) {}
+}
+const ESTADO = { pendiente: 'Pendiente', enviando: 'Subiendo…', subido: 'Subida ✓', error: 'Error' };
+const hora = t => t ? new Date(t).toLocaleString('es-CO', { day: '2-digit', month: '2-digit', hour: '2-digit', minute: '2-digit' }) : '';
+async function renderOutbox() {
+  let lista = []; try { lista = await ENVIO.todos(); } catch (e) {}
+  lista.sort((a, b) => b.creado - a.creado);
+  const pend = lista.filter(x => x.estado === 'pendiente' || x.estado === 'enviando').length;
+  const errs = lista.filter(x => x.estado === 'error').length;
+  $('#outbox').style.display = lista.length ? '' : 'none';
+  const on = navigator.onLine;
+  const subiendo = lista.some(x => x.estado === 'enviando');
+  $('#obNet').textContent = on
+    ? (subiendo ? 'En línea · subiendo actas…' : pend ? `En línea · ${pend} acta(s) pendiente(s); se reintentará automáticamente.` : errs ? 'En línea · revise las actas con error (toque ↻ para reintentar).' : 'En línea · todo al día.')
+    : `Sin conexión · ${pend} acta(s) esperando señal. Se subirán solas.`;
+  $('#obList').innerHTML = lista.map(x => `<div class="ob" data-id="${esc(x.id)}"><div class="t"><div class="n">${esc(x.nombre)}</div>
+    <div class="s"><span class="chip ${x.estado}">${ESTADO[x.estado] || x.estado}</span>${esc(x.destino)} · ${x.estado === 'subido' ? 'subida ' + hora(x.subido) : 'creada ' + hora(x.creado)}${x.kb ? ' · ' + x.kb + ' KB' : ''}</div>
+    ${x.error && x.estado !== 'subido' ? `<div class="s" style="color:${x.estado === 'error' ? '#b91c1c' : 'var(--mut)'}">${esc(x.error)}</div>` : ''}</div>
+    ${x.estado === 'error' || x.estado === 'pendiente' ? '<button data-a="re" type="button">↻</button>' : ''}<button data-a="del" type="button" aria-label="Quitar">✕</button></div>`).join('');
+  const chip = $('#netChip');
+  chip.style.display = AUTO_OK() && (lista.length || !on) ? '' : 'none';
+  chip.classList.toggle('off', !on);
+  chip.textContent = (on ? '● En línea' : '○ Sin conexión') + (pend ? ` · ${pend} por subir` : errs ? ` · ${errs} con error` : '');
+}
+
+/* ---------------- Resultado ---------------- */
+
+/* ---------------- Instalación (Android: aviso nativo · iPhone: Agregar a inicio) ---------------- */
+const UA = navigator.userAgent || '';
+const IS_IOS = /iPad|iPhone|iPod/.test(UA) || (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
+const IS_ANDROID = /Android/i.test(UA);
+const IOS_VER = (() => { const m = UA.match(/OS (\d+)_(\d+)/); return m ? +m[1] + m[2] / 100 : 0; })();
+const IS_STANDALONE = () => (window.matchMedia && matchMedia('(display-mode: standalone)').matches) || navigator.standalone === true;
+const NO_INST_KEY = 'actaGAM006_noInstalar';
+let bip = null; // evento beforeinstallprompt (Chrome / Edge / Samsung en Android)
+window.addEventListener('beforeinstallprompt', e => { e.preventDefault(); bip = e; renderInstall(); });
+window.addEventListener('appinstalled', () => { bip = null; lsSet(NO_INST_KEY, true); toast('✅ App instalada. Ábrala desde la pantalla de inicio.', 4500); renderInstall(); });
+function renderInstall(forzar) {
+  const puede = window.APP_WEB && !IN_CLAUDE && !IS_STANDALONE();
+  const movil = IS_IOS || IS_ANDROID;
+  $('#instShow').style.display = puede && (movil || bip) ? '' : 'none';
+  const ver = puede && (forzar || !lsGet(NO_INST_KEY)) && (bip || movil);
+  $('#installCard').style.display = ver ? '' : 'none';
+  if (!ver) return;
+  $('#instAndroid').style.display = bip ? '' : 'none';
+  $('#instAndroidMenu').style.display = !bip && IS_ANDROID ? '' : 'none';
+  $('#instIOS').style.display = IS_IOS ? '' : 'none';
+  const otro = /CriOS|FxiOS|EdgiOS|OPiOS/.test(UA);
+  $('#iosBrowser').textContent = /CriOS/.test(UA) ? 'Chrome (o en Safari)' : /EdgiOS/.test(UA) ? 'Edge (o en Safari)' : 'Safari';
+  $('#iosOld').style.display = otro && IOS_VER < 16.4 ? '' : 'none';
+}
+
+/* ---------------- Resultado ---------------- */
+let lastPdf = null;
+const fileName = () => { const no = F('no').replace(/[^\w-]+/g, '') || 'sn'; const f = (F('fecha') || fmtFecha(new Date().toISOString().slice(0, 10))).replace(/[^\w-]+/g, '-'); return `GAM-F-006_Acta_${no}_${f}.pdf`; };
+async function doPdf() {
+  busy(true, 'Generando PDF…');
+  try {
+    const r = await buildPdf();
+    lastPdf = new File([r.bytes], fileName(), { type: 'application/pdf' });
+    $('#resInfo').innerHTML = `<b>${lastPdf.name}</b><br>${r.total} hoja${r.total > 1 ? 's' : ''} de acta${r.nExtra ? ` (incluye ${r.nExtra} de continuación)` : ''} + ${r.annex ? r.annex + ' hoja(s) de listado escaneado' : 'sin listado escaneado'} · ${(r.bytes.length / 1024).toFixed(0)} KB`;
+    $('#resWarn').innerHTML = r.warnings.map(w => `<li>${w.replace(/</g, '&lt;')}</li>`).join('');
+    $('#result').classList.add('on');
+    $('#btnShare').style.display = (!IN_CLAUDE && navigator.canShare && navigator.canShare({ files: [lastPdf] })) ? '' : 'none';
+    $('#btnOpen').style.display = IN_CLAUDE ? 'none' : '';
+    $('#result').scrollIntoView({ behavior: 'smooth', block: 'center' });
+    return r;
+  } catch (e) { console.error(e); toast('Error generando el PDF: ' + e.message, 5000); }
+  finally { busy(false); }
+}
+// Página publicada en claude.ai: las descargas pasan por la capacidad "downloads"
+const IN_CLAUDE = !!(window.claude && typeof window.claude.use === 'function');
+let dlCap = null;
+if (IN_CLAUDE) window.claude.use('downloads').then(d => { dlCap = d; }).catch(() => {});
+async function download() {
+  if (!lastPdf) return;
+  if (IN_CLAUDE) {
+    if (!dlCap) { toast('La descarga no está disponible en esta vista. Abra la página desde su enlace en claude.ai.', 5000); return; }
+    const bytes = new Uint8Array(await lastPdf.arrayBuffer());
+    for (const data of [lastPdf, bytes]) {
+      try { await dlCap.save({ filename: lastPdf.name, data }); return; }
+      catch (e) { if (e && /declin|cancel|denied|abort/i.test(String(e.code || e.name || e.message))) return; console.warn('downloads.save', e); }
+    }
+    toast('No se pudo descargar el PDF.', 4000); return;
+  }
+  const a = document.createElement('a'); a.href = URL.createObjectURL(lastPdf); a.download = lastPdf.name; document.body.appendChild(a); a.click(); setTimeout(() => { URL.revokeObjectURL(a.href); a.remove(); }, 4000);
+}
+// Diálogo de confirmación propio (confirm() está bloqueado en páginas publicadas)
+function ask(msg, okTxt = 'Sí, continuar') {
+  return new Promise(res => {
+    const d = document.createElement('div');
+    d.style.cssText = 'position:fixed;inset:0;z-index:50;background:rgba(0,0,0,.45);display:grid;place-items:center;padding:20px';
+    d.innerHTML = `<div style="background:#fff;border-radius:14px;padding:18px;max-width:360px;width:100%"><p style="margin:0 0 16px;font-size:16px"></p><div class="btns"><button class="btn g" data-v="0" type="button">Cancelar</button><button class="btn p" data-v="1" type="button"></button></div></div>`;
+    d.querySelector('p').textContent = msg; d.querySelector('[data-v="1"]').textContent = okTxt;
+    d.onclick = e => { const b = e.target.closest('button'); if (!b) return; d.remove(); res(b.dataset.v === '1'); };
+    document.body.appendChild(d);
+  });
+}
+
+/* ---------------- Inicio ---------------- */
+(async function init() {
+  await loadDraft();
+  // Fecha: editable a mano (dd/mm/aaaa) o con el calendario
+  const hoyISO = () => new Date(Date.now() - new Date().getTimezoneOffset() * 60000).toISOString().slice(0, 10);
+  if (/^\d{4}-\d{2}-\d{2}$/.test(F('fecha'))) $('#fecha').value = fmtFecha(F('fecha')); // borradores antiguos
+  if (!F('fecha')) $('#fecha').value = fmtFecha(hoyISO());
+  $('#fecha').addEventListener('input', e => {
+    if (e.inputType && e.inputType.startsWith('delete')) return;
+    const v = $('#fecha').value;
+    if (/^\d{3,8}$/.test(v)) { const d = v.slice(0, 2), m = v.slice(2, 4), y = v.slice(4); $('#fecha').value = d + '/' + m + (y ? '/' + y : ''); saveDraft(); }
+  });
+  $('#fechaCal').onclick = () => {
+    const p = $('#fechaPick'); const m = F('fecha').match(/^(\d{1,2})\/(\d{1,2})\/(\d{4})$/);
+    p.value = m ? `${m[3]}-${m[2].padStart(2, '0')}-${m[1].padStart(2, '0')}` : hoyISO();
+    try { p.showPicker(); } catch (e) { p.style.pointerEvents = 'auto'; p.focus(); p.click(); }
+  };
+  $('#fechaPick').onchange = () => { if ($('#fechaPick').value) { $('#fecha').value = fmtFecha($('#fechaPick').value); saveDraft(); } $('#fechaPick').style.pointerEvents = 'none'; };
+  renderTemas(); renderComps(); renderSig(); renderThumbs(); updateDevMeter();
+  document.querySelectorAll('[data-k]').forEach(el => el.addEventListener('input', () => { saveDraft(); if (el.id === 'desarrollo') updateDevMeter(); }));
+
+  $('#btnCam').onclick = () => $('#fileCam').click();
+  $('#btnCamBar').onclick = () => $('#fileCam').click();
+  renderDir();
+  $('#dirEdit').onclick = () => dirForm(true);
+  $('#dirCancel').onclick = () => dirForm(false);
+  $('#dirSave').onclick = saveDir;
+  $('#dirDel').onclick = async () => { if (!(await ask('¿Quitar la carpeta guardada?', 'Quitar'))) return; lsSet(DIR_KEY, null); dirForm(false); renderDir(); };
+  $('#dirInUrl').addEventListener('input', onDirUrl);
+  $('#flowEdit').onclick = () => flowForm(true);
+  $('#flowCancel').onclick = () => flowForm(false);
+  $('#flowSave').onclick = saveFlow;
+  $('#flowDel').onclick = async () => { if (!(await ask('¿Quitar el flujo? Las actas ya en la bandeja se seguirán enviando.', 'Quitar'))) return; lsSet(FLOW_KEY, null); flowForm(false); renderDir(); };
+  $('#btnSend').onclick = enviarActa;
+  $('#obRetry').onclick = () => { if (!navigator.onLine) { toast('Sin conexión: se intentará al recuperar la señal'); return; } procesarBandeja(true); };
+  $('#obClean').onclick = async () => { for (const x of await ENVIO.todos()) if (x.estado === 'subido') await ENVIO.quitar(x.id); renderOutbox(); };
+  $('#netChip').onclick = () => $('#outbox').style.display !== 'none' ? $('#outbox').scrollIntoView({ behavior: 'smooth' }) : null;
+  $('#obList').onclick = async e => {
+    const b = e.target.closest('button'); if (!b) return; const id = b.closest('.ob').dataset.id;
+    if (b.dataset.a === 'del') { const it = (await ENVIO.todos()).find(x => x.id === id); if (it && it.estado !== 'subido' && !(await ask('Esta acta aún no se ha subido. ¿Quitarla de la bandeja?', 'Quitar'))) return; await ENVIO.quitar(id); renderOutbox(); }
+    if (b.dataset.a === 're') {
+      if (!navigator.onLine) { toast('Sin conexión: se subirá al recuperar la señal'); return; }
+      const it = (await ENVIO.todos()).find(x => x.id === id), f = getFlow();
+      if (it && f && it.flowUrl !== f) { it.flowUrl = f; await ENVIO.guardar(it); } // usa el flujo corregido
+      await ENVIO.reintentar(id); renderOutbox();
+    }
+  };
+  // Reintentos: al volver la señal, al volver a la app y cada 30 s
+  window.addEventListener('online', () => { toast('Conexión recuperada: subiendo actas pendientes…'); procesarBandeja(true); });
+  window.addEventListener('offline', renderOutbox);
+  document.addEventListener('visibilitychange', () => { if (!document.hidden) procesarBandeja(); });
+  setInterval(() => procesarBandeja(), 30000);
+  if (ENVIO.canal) ENVIO.canal.onmessage = ev => { renderOutbox(); if (ev.data && ev.data.tipo === 'subido') toast(`✅ Acta subida: ${ev.data.nombre}`, 4000); };
+  renderOutbox(); procesarBandeja();
+  // App instalable y disponible sin internet (solo en la versión web alojada)
+  // Actualización automática: al abrir o volver a la app busca una versión nueva; si la hay, recarga sola
+  if (window.APP_WEB && 'serviceWorker' in navigator && !IN_CLAUDE) {
+    const habiaVersion = !!navigator.serviceWorker.controller;
+    let recargando = false;
+    const modalAbierto = () => document.querySelector('.modal.on') || $('#busy').classList.contains('on');
+    const recargar = () => { if (recargando) return; if (modalAbierto()) { setTimeout(recargar, 2000); return; } recargando = true; saveDraft(); toast('🔄 Actualizando a la versión nueva…', 2000); setTimeout(() => location.reload(), 600); };
+    navigator.serviceWorker.addEventListener('controllerchange', () => { if (habiaVersion) recargar(); });
+    navigator.serviceWorker.register('sw.js', { updateViaCache: 'none' }).then(reg => {
+      const buscar = () => { if (navigator.onLine) reg.update().catch(() => {}); };
+      document.addEventListener('visibilitychange', () => { if (!document.hidden) buscar(); });
+      window.addEventListener('online', buscar);
+      setInterval(buscar, 15 * 60000);
+    }).catch(e => console.warn('SW', e));
+  }
+  $('#appVer').textContent = window.APP_VERSION ? 'Versión ' + window.APP_VERSION.replace(/^(\d{4})(\d{2})(\d{2})(\d{2})(\d{2}).*/, '$3/$2/$1 $4:$5') : '';
+  // Pide al sistema no borrar los datos guardados (borradores y bandeja), importante en iPhone
+  try { if (window.APP_WEB && navigator.storage && navigator.storage.persist) navigator.storage.persist(); } catch (e) {}
+  renderInstall();
+  $('#btnInstall').onclick = async () => { if (!bip) return; bip.prompt(); try { const r = await bip.userChoice; if (r && r.outcome === 'accepted') lsSet(NO_INST_KEY, true); } catch (e) {} bip = null; renderInstall(); };
+  $('#instClose').onclick = () => { lsSet(NO_INST_KEY, true); renderInstall(); };
+  $('#instShow').onclick = e => { e.preventDefault(); renderInstall(true); window.scrollTo({ top: 0, behavior: 'smooth' }); };
+  $('#btnGal').onclick = () => $('#fileGal').click();
+  $('#fileCam').onchange = e => { enqueueFiles([...e.target.files]); e.target.value = ''; };
+  $('#fileGal').onchange = e => { enqueueFiles([...e.target.files]); e.target.value = ''; };
+
+  const scv = $('#scanCanvas');
+  scv.addEventListener('pointerdown', e => { const p = scanPt(e), tol = 34 / scan.view.s; let bi = -1, bd = Infinity; scan.corners.forEach((c, i) => { const dd = Math.hypot(c.x - p.x, c.y - p.y); if (dd < bd) { bd = dd; bi = i; } }); if (bd < tol * 2.2) { scan.drag = bi; scv.setPointerCapture(e.pointerId); } });
+  scv.addEventListener('pointermove', e => { if (scan.drag < 0) return; const p = scanPt(e); scan.corners[scan.drag] = { x: Math.max(0, Math.min(scan.img.width, p.x)), y: Math.max(0, Math.min(scan.img.height, p.y)) }; drawScan(); });
+  ['pointerup', 'pointercancel'].forEach(t => scv.addEventListener(t, () => scan.drag = -1));
+  window.addEventListener('resize', () => { if ($('#scanModal').classList.contains('on')) drawScan(); });
+  $('#scanFilter').onclick = e => { const b = e.target.closest('button'); if (!b) return; scan.filter = b.dataset.f; $('#scanFilter').querySelectorAll('button').forEach(x => x.classList.toggle('on', x === b)); };
+  $('#scanRot').onclick = rotateScan;
+  $('#scanFull').onclick = () => { scan.corners = fullCorners(scan.img); drawScan(); };
+  $('#scanCancel').onclick = () => { $('#scanModal').classList.remove('on'); scan.img = null; nextScan(); };
+  $('#scanOk').onclick = () => {
+    busy(true, 'Procesando hoja…');
+    setTimeout(async () => {
+      try { const c = warpAndFilter(); scans.push({ id: Date.now(), data: c.toDataURL('image/jpeg', 0.82), w: c.width, h: c.height }); renderThumbs(); await saveScans(); toast(`Hoja ${scans.length} agregada`); }
+      catch (e) { console.error(e); toast('No se pudo procesar la imagen'); }
+      busy(false); $('#scanModal').classList.remove('on'); scan.img = null; nextScan();
+    }, 30);
+  };
+
+  const cv = $('#sigCanvas');
+  cv.addEventListener('pointerdown', sigDown); cv.addEventListener('pointermove', sigMove);
+  ['pointerup', 'pointercancel', 'pointerleave'].forEach(t => cv.addEventListener(t, sigUp));
+  $('#sigBox').onclick = openSig;
+  $('#sigCancel').onclick = () => $('#sigModal').classList.remove('on');
+  $('#sigReset').onclick = () => { sig.ctx.clearRect(0, 0, sig.cv.width, sig.cv.height); sig.dirty = false; };
+  $('#sigOk').onclick = () => { if (!sig.dirty) { toast('Dibuje su firma primero'); return; } const d = sigExport(); if (!d) { toast('Dibuje su firma primero'); return; } state.firma = d; renderSig(); saveDraft(); $('#sigModal').classList.remove('on'); toast('Firma guardada'); };
+  $('#sigClear').onclick = () => { state.firma = null; renderSig(); saveDraft(); };
+  window.addEventListener('resize', () => { if ($('#sigModal').classList.contains('on') && !sig.dirty) openSig(); });
+
+  $('#btnPdf').onclick = doPdf;
+  $('#btnDown').onclick = download;
+  $('#btnOpen').onclick = () => { if (lastPdf) window.open(URL.createObjectURL(lastPdf), '_blank'); };
+  $('#btnShare').onclick = async () => { try { await navigator.share({ files: [lastPdf], title: lastPdf.name, text: `Acta reuniones externas No. ${F('no')}` }); } catch (e) { if (e.name !== 'AbortError') download(); } };
+  $('#btnNew').onclick = async () => {
+    if (!(await ask('¿Borrar todos los datos, la firma y los escaneos para comenzar una nueva acta?', 'Borrar todo'))) return;
+    try { localStorage.removeItem('actaGAM006'); } catch (e) {} await idb.del('scans').catch(() => {}); location.reload();
+  };
+  window.__buildPdf = buildPdf; // para pruebas
+})();
+</script>
+</body>
+</html>
