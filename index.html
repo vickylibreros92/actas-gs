@@ -172,9 +172,17 @@
     <div class="btns" style="margin-top:8px"><button class="btn g sm" id="sigClear" type="button">Borrar firma</button></div>
   </div></section>
 
-  <section class="card"><h2><span class="n">7</span>Carpeta donde se guardan las actas</h2><div class="body">
+  <section class="card"><h2><span class="n">7</span>Dónde guardar las actas</h2><div class="body">
+    <p class="hint" id="saveHelp" style="margin-top:0"></p>
+    <div id="pickBox" style="display:none;margin-top:10px">
+      <div style="font-weight:700" id="pickName"></div>
+      <div class="btns" style="margin-top:8px"><button class="btn s" id="btnPickDir" type="button">📁 Elegir carpeta</button><button class="btn g sm" id="btnPickClear" type="button" style="display:none">Quitar</button></div>
+    </div>
+    <details id="autoDetails" style="margin-top:14px;border-top:1px solid var(--line);padding-top:10px">
+    <summary style="cursor:pointer;font-weight:700;font-size:14px">☁️ Subida automática a SharePoint (opcional)</summary>
+    <p class="hint">Requiere un flujo de Power Automate. Con él, las actas se suben solas a una carpeta de SharePoint, aun si se generan sin señal.</p>
     <div id="dirView">
-      <p class="hint" id="dirEmpty" style="margin-top:0">Aún no ha elegido una carpeta. Pegue el enlace de la carpeta de SharePoint, OneDrive o Teams donde quiere guardar las actas.</p>
+      <p class="hint" id="dirEmpty" style="margin-top:0">Pegue el enlace de la carpeta de SharePoint, OneDrive o Teams de destino.</p>
       <div id="dirSet" style="display:none">
         <div style="font-weight:700" id="dirName"></div>
         <div class="hint" id="dirDest" style="word-break:break-all;margin-top:2px"></div>
@@ -203,7 +211,7 @@
     </div>
 
     <div id="autoBox" style="margin-top:14px;border-top:1px solid var(--line);padding-top:12px">
-      <div style="font-weight:700;font-size:14px">☁️ Subida automática</div>
+      <div style="font-weight:700;font-size:14px">Flujo de Power Automate</div>
       <div id="flowView">
         <p class="hint" id="flowState" style="margin-top:4px"></p>
         <div class="btns" style="margin-top:8px"><button class="btn g sm" id="flowEdit" type="button">⚙️ Configurar flujo</button></div>
@@ -220,14 +228,17 @@
         </div>
       </div>
     </div>
-    <p class="hint">Todo se guarda en este celular, se puede editar sin internet y no se borra con «Nueva acta».</p>
+    <p class="hint">Esta configuración se guarda en este celular, se puede editar sin internet y no se borra con «Nueva acta».</p>
+    </details>
   </div></section>
 
   <section class="card" id="result"><h2><span class="n">✓</span>PDF generado</h2><div class="body">
     <p id="resInfo" style="margin:0"></p>
     <ul class="warnlist" id="resWarn"></ul>
-    <div class="btns" style="margin-top:12px">
-      <button class="btn p" id="btnShare" type="button">Compartir</button>
+    <button class="btn p" id="btnSaveTo" type="button" style="width:100%;margin-top:12px">📁 Guardar en…</button>
+    <p class="hint" id="saveToHint" style="margin-top:6px"></p>
+    <div class="btns" style="margin-top:8px">
+      <button class="btn s" id="btnShare" type="button">Compartir</button>
       <button class="btn s" id="btnDown" type="button">Descargar</button>
       <button class="btn g" id="btnOpen" type="button">Ver</button>
     </div>
@@ -240,7 +251,7 @@
       <ol class="hint" style="padding-left:18px;margin:6px 0 10px"><li>Toque <b>Descargar</b> para guardar el PDF en el celular.</li><li>Abra la carpeta y use <b>Cargar / Subir</b> para adjuntar el PDF.</li></ol>
       <a class="btn s" id="resDirOpen" target="_blank" rel="noopener" style="display:flex;text-decoration:none">📁 Abrir <span id="resDirName"></span></a>
     </div>
-    <p class="hint" id="resNoDir" style="display:none;margin-top:12px">Consejo: elija la carpeta de actas (sección 7) para guardar el acta allí.</p>
+    <p class="hint" id="resNoDir" style="display:none"></p>
   </div></section>
 
   <section class="card" id="outbox" style="display:none"><h2><span class="n">☁</span>Bandeja de envío</h2><div class="body">
@@ -295,7 +306,7 @@
 <div class="toast" id="toast"></div>
 
 <script src="pdf-lib.min.js"></script>
-<script>window.APP_WEB=true;window.APP_VERSION='20261106082702';</script>
+<script>window.APP_WEB=true;window.APP_VERSION='20261106083643';</script>
 <script src="envio-core.js"></script>
 <script>
 'use strict';
@@ -953,6 +964,65 @@ async function renderOutbox() {
 
 /* ---------------- Resultado ---------------- */
 
+/* ---------------- Guardar en… (carpeta del celular, OneDrive, SharePoint) ---------------- */
+let dirHandle = null; // carpeta elegida (solo computador con Chrome/Edge)
+const PUEDE_CARPETA = () => typeof window.showDirectoryPicker === 'function' && !IN_CLAUDE && !IS_IOS && !IS_ANDROID;
+const PUEDE_GUARDAR_COMO = () => typeof window.showSaveFilePicker === 'function' && !IN_CLAUDE;
+const PUEDE_COMPARTIR = f => !IN_CLAUDE && !!(navigator.canShare && navigator.canShare({ files: [f || new File([''], 'a.pdf', { type: 'application/pdf' })] }));
+function modoGuardar() {
+  if (dirHandle && PUEDE_CARPETA()) return 'carpeta';
+  if (PUEDE_GUARDAR_COMO()) return 'guardarComo';
+  if (PUEDE_COMPARTIR(lastPdf)) return 'compartir';
+  return 'descargar';
+}
+function renderSave() {
+  const m = modoGuardar();
+  $('#pickBox').style.display = PUEDE_CARPETA() ? '' : 'none';
+  $('#pickName').textContent = dirHandle ? `Carpeta elegida: ${dirHandle.name}` : 'Aún no ha elegido una carpeta.';
+  $('#btnPickDir').textContent = dirHandle ? '📁 Cambiar carpeta' : '📁 Elegir carpeta';
+  $('#btnPickClear').style.display = dirHandle ? '' : 'none';
+  $('#saveHelp').innerHTML = PUEDE_CARPETA()
+    ? 'Elija una carpeta del computador (puede ser una carpeta de <b>OneDrive o SharePoint sincronizada</b>). Cada acta se guardará ahí directamente con «📁 Guardar en».'
+    : IS_IOS
+      ? 'Al generar el PDF toque <b>«📁 Guardar en…»</b> y elija <b>«Guardar en Archivos»</b>: puede escoger una carpeta del iPhone, iCloud Drive u <b>OneDrive / SharePoint</b> (con la app de OneDrive instalada).'
+      : IS_ANDROID
+        ? 'Al generar el PDF toque <b>«📁 Guardar en…»</b> y elija dónde guardarlo: una carpeta del celular, Google Drive u <b>OneDrive / SharePoint</b> (con la app de OneDrive instalada).'
+        : 'Al generar el PDF toque <b>«📁 Guardar en…»</b> y elija la carpeta donde guardarlo.';
+  $('#btnSaveTo').textContent = m === 'carpeta' ? `📁 Guardar en «${dirHandle.name}»` : m === 'descargar' ? '⬇️ Guardar (descargar)' : '📁 Guardar en…';
+  $('#saveToHint').textContent = m === 'compartir' ? (IS_IOS ? 'En el menú elija «Guardar en Archivos» y la carpeta (iPhone, iCloud, OneDrive o SharePoint).' : 'En el menú elija la app o carpeta donde guardarlo (Archivos, Drive, OneDrive…).')
+    : m === 'guardarComo' ? 'Se abrirá el selector para escoger carpeta y nombre.' : m === 'carpeta' ? '' : 'El PDF se guardará en Descargas.';
+  $('#btnDown').style.display = m === 'descargar' ? 'none' : '';
+  $('#btnShare').style.display = m !== 'compartir' && PUEDE_COMPARTIR(lastPdf) ? '' : 'none';
+}
+async function elegirCarpeta() {
+  try {
+    const h = await window.showDirectoryPicker({ id: 'actas-gam006', mode: 'readwrite', startIn: 'documents' });
+    dirHandle = h; try { await ENVIO.kvSet('carpetaLocal', h); } catch (e) {}
+    renderSave(); toast(`Carpeta elegida: ${h.name}`);
+  } catch (e) { if (e.name !== 'AbortError') toast('No se pudo elegir la carpeta'); }
+}
+async function escribir(fh) { const w = await fh.createWritable(); await w.write(lastPdf); await w.close(); }
+async function guardarEn() {
+  if (!lastPdf) return;
+  const m = modoGuardar();
+  try {
+    if (m === 'carpeta') {
+      let p = await dirHandle.queryPermission({ mode: 'readwrite' });
+      if (p !== 'granted') p = await dirHandle.requestPermission({ mode: 'readwrite' });
+      if (p === 'granted') { await escribir(await dirHandle.getFileHandle(lastPdf.name, { create: true })); toast(`✅ Acta guardada en «${dirHandle.name}»`, 3500); return; }
+      toast('Sin permiso para esa carpeta; elija dónde guardar'); // sigue al selector
+    }
+    if (m === 'carpeta' || m === 'guardarComo') {
+      if (PUEDE_GUARDAR_COMO()) {
+        const fh = await window.showSaveFilePicker({ id: 'actas-gam006', suggestedName: lastPdf.name, startIn: 'documents', types: [{ description: 'Acta en PDF', accept: { 'application/pdf': ['.pdf'] } }] });
+        await escribir(fh); toast('✅ Acta guardada', 3000); return;
+      }
+    }
+    if (PUEDE_COMPARTIR(lastPdf)) { await navigator.share({ files: [lastPdf], title: lastPdf.name }); return; }
+  } catch (e) { if (e.name === 'AbortError') return; console.warn('guardar', e); }
+  download();
+}
+
 /* ---------------- Instalación (Android: aviso nativo · iPhone: Agregar a inicio) ---------------- */
 const UA = navigator.userAgent || '';
 const IS_IOS = /iPad|iPhone|iPod/.test(UA) || (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
@@ -993,7 +1063,7 @@ async function doPdf() {
     $('#resInfo').innerHTML = `<b>${lastPdf.name}</b><br>${r.total} hoja${r.total > 1 ? 's' : ''} de acta${r.nExtra ? ` (incluye ${r.nExtra} de continuación)` : ''} + ${r.annex ? r.annex + ' hoja(s) de listado escaneado' : 'sin listado escaneado'} · ${(r.bytes.length / 1024).toFixed(0)} KB`;
     $('#resWarn').innerHTML = r.warnings.map(w => `<li>${w.replace(/</g, '&lt;')}</li>`).join('');
     $('#result').classList.add('on');
-    $('#btnShare').style.display = (!IN_CLAUDE && navigator.canShare && navigator.canShare({ files: [lastPdf] })) ? '' : 'none';
+    renderSave();
     $('#btnOpen').style.display = IN_CLAUDE ? 'none' : '';
     $('#result').scrollIntoView({ behavior: 'smooth', block: 'center' });
     return r;
@@ -1139,6 +1209,11 @@ function ask(msg, okTxt = 'Sí, continuar') {
 
   $('#btnPdf').onclick = doPdf;
   $('#btnDown').onclick = download;
+  $('#btnSaveTo').onclick = guardarEn;
+  $('#btnPickDir').onclick = elegirCarpeta;
+  $('#btnPickClear').onclick = async () => { dirHandle = null; try { await ENVIO.kvDel('carpetaLocal'); } catch (e) {} renderSave(); };
+  try { const h = await ENVIO.kvGet('carpetaLocal'); if (h && h.kind === 'directory') dirHandle = h; } catch (e) {}
+  renderSave();
   $('#btnOpen').onclick = () => { if (lastPdf) window.open(URL.createObjectURL(lastPdf), '_blank'); };
   $('#btnShare').onclick = async () => { try { await navigator.share({ files: [lastPdf], title: lastPdf.name, text: `Acta reuniones externas ${F('fecha')}${F('asunto') ? ' - ' + F('asunto') : ''}` }); } catch (e) { if (e.name !== 'AbortError') download(); } };
   $('#btnNew').onclick = async () => {
