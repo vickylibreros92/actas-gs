@@ -163,6 +163,22 @@
     <input type="file" id="fileCam" accept="image/*" capture="environment" hidden>
     <input type="file" id="fileGal" accept="image/*" multiple hidden>
     <div class="thumbs" id="thumbs"></div>
+    <div id="reabrir" style="margin-top:16px;border-top:1px solid var(--line);padding-top:12px">
+      <div style="font-weight:700;font-size:14px">¿El PDF del acta ya está generado?</div>
+      <p class="hint" style="margin:4px 0 10px">Ábralo de nuevo para escanear los listados de asistencia. El acta queda igual y los listados se agregan al final.</p>
+      <button class="btn s" id="btnReopen" type="button" style="width:100%">📂 Abrir un PDF ya generado</button>
+      <input type="file" id="filePdf" accept="application/pdf,.pdf" hidden>
+      <div id="anexoBox" style="display:none;margin-top:10px">
+        <p id="anexoInfo" style="margin:0 0 8px;font-size:14px"></p>
+        <div class="btns">
+          <button class="btn p" id="btnAnxCam" type="button">📷 Escanear con cámara</button>
+          <button class="btn s" id="btnAnxGal" type="button">🖼️ Desde galería</button>
+        </div>
+        <div class="thumbs" id="anxThumbs"></div>
+        <button class="btn p" id="btnAnxPdf" type="button" style="width:100%;margin-top:10px">📄 Agregar listados al PDF</button>
+        <button class="btn g" id="btnAnxClose" type="button" style="width:100%;margin-top:6px">Cerrar este PDF</button>
+      </div>
+    </div>
   </div></section>
 
   <section class="card"><h2><span class="n">6</span>Elaboración y firma</h2><div class="body">
@@ -306,7 +322,7 @@
 <div class="toast" id="toast"></div>
 
 <script src="pdf-lib.min.js"></script>
-<script>window.APP_WEB=true;window.APP_VERSION='20261106111531';</script>
+<script>window.APP_WEB=true;window.APP_VERSION='20261106145024';</script>
 <script src="envio-core.js"></script>
 <script>
 'use strict';
@@ -605,15 +621,7 @@ async function buildPdf() {
 
   /* ---- Anexos: listado de asistencia ---- */
   if (scans.length) {
-    for (const s of scans) {
-      const img = await doc.embedJpg(s.data);
-      const land = img.width > img.height;
-      const PW = land ? 792 : 612, PH = land ? 612 : 792, m = 18;
-      const pg = doc.addPage([PW, PH]);
-      const sc = Math.min((PW - 2 * m) / img.width, (PH - 2 * m) / img.height);
-      const w = img.width * sc, h = img.height * sc;
-      pg.drawImage(img, { x: (PW - w) / 2, y: (PH - h) / 2, width: w, height: h });
-    }
+    await agregarHojas(doc, scans);
   } else {
     warnings.push('No se ha escaneado ningún listado de asistencia.');
   }
@@ -628,6 +636,66 @@ async function buildPdf() {
   if (devLines.length > cap12) { /* informativo */ }
   const bytes = await doc.save();
   return { bytes, warnings, total, annex: scans.length, devLines: devLines.length, nExtra };
+}
+
+// Agrega cada hoja escaneada como una página tamaño carta (horizontal si la imagen es ancha)
+async function agregarHojas(doc, lista) {
+  for (const s of lista) {
+    const img = await doc.embedJpg(s.data);
+    const land = img.width > img.height;
+    const PW = land ? 792 : 612, PH = land ? 612 : 792, m = 18;
+    const pg = doc.addPage([PW, PH]);
+    const sc = Math.min((PW - 2 * m) / img.width, (PH - 2 * m) / img.height);
+    const w = img.width * sc, h = img.height * sc;
+    pg.drawImage(img, { x: (PW - w) / 2, y: (PH - h) / 2, width: w, height: h });
+  }
+}
+
+/* ---------------- Reabrir un PDF ya generado para agregarle listados ---------------- */
+let anexo = null; // { name, bytes, pages, scans: [] }
+function renderAnexo() {
+  $('#anexoBox').style.display = anexo ? '' : 'none';
+  $('#btnReopen').textContent = anexo ? '📂 Abrir otro PDF' : '📂 Abrir un PDF ya generado';
+  if (!anexo) { $('#anxThumbs').innerHTML = ''; return; }
+  $('#anexoInfo').innerHTML = `📄 <b>${esc(anexo.name)}</b> · ${anexo.pages} hoja${anexo.pages > 1 ? 's' : ''}<br><span class="hint">${anexo.scans.length ? `${anexo.scans.length} hoja(s) escaneada(s) lista(s) para agregar` : 'Escanee las hojas del listado de asistencia.'}</span>`;
+  $('#btnAnxPdf').disabled = !anexo.scans.length;
+  renderThumbs();
+}
+async function abrirPdf(file) {
+  if (!file) return;
+  if (anexo && anexo.scans.length && !(await ask(`Hay ${anexo.scans.length} hoja(s) escaneada(s) que aún no se agregaron a «${anexo.name}». ¿Descartarlas y abrir otro PDF?`, 'Abrir otro'))) return;
+  busy(true, 'Abriendo PDF…');
+  try {
+    const bytes = new Uint8Array(await file.arrayBuffer());
+    const doc = await PDFLib.PDFDocument.load(bytes, { ignoreEncryption: true });
+    const name = /\.pdf$/i.test(file.name) ? file.name : (file.name || 'Acta') + '.pdf';
+    anexo = { name, bytes, pages: doc.getPageCount(), scans: [] };
+    renderAnexo();
+    toast('PDF abierto: ahora escanee los listados');
+    $('#reabrir').scrollIntoView({ behavior: 'smooth', block: 'start' });
+  } catch (e) { console.error(e); toast('No se pudo abrir ese archivo. Elija un PDF.', 4000); }
+  finally { busy(false); }
+}
+async function pdfConAnexos() {
+  if (!anexo || !anexo.scans.length) { toast('Escanee al menos una hoja del listado'); return; }
+  busy(true, 'Agregando listados al PDF…');
+  try {
+    const doc = await PDFLib.PDFDocument.load(anexo.bytes, { ignoreEncryption: true });
+    const antes = doc.getPageCount(), n = anexo.scans.length;
+    await agregarHojas(doc, anexo.scans);
+    doc.setModificationDate(new Date());
+    const bytes = await doc.save();
+    lastPdf = new File([bytes], anexo.name, { type: 'application/pdf' });
+    anexo = { name: anexo.name, bytes, pages: antes + n, scans: [] };
+    renderAnexo();
+    $('#resInfo').innerHTML = `<b>${esc(lastPdf.name)}</b><br>${antes} hoja${antes > 1 ? 's' : ''} del PDF abierto + ${n} hoja(s) de listado escaneado · ${(bytes.length / 1024).toFixed(0)} KB`;
+    $('#resWarn').innerHTML = '';
+    $('#result').classList.add('on');
+    renderSave();
+    $('#btnOpen').style.display = IN_CLAUDE ? 'none' : '';
+    $('#result').scrollIntoView({ behavior: 'smooth', block: 'center' });
+  } catch (e) { console.error(e); toast('Error agregando los listados: ' + e.message, 5000); }
+  finally { busy(false); }
 }
 
 /* ---------------- Medidor de renglones del desarrollo ---------------- */
@@ -706,11 +774,13 @@ function loadImageFile(file) {
   });
 }
 const scanQueue = [];
-async function enqueueFiles(files) { for (const f of files) scanQueue.push(f); if (!$('#scanModal').classList.contains('on')) nextScan(); }
+let camDest = 'acta'; // 'acta' = acta en edición · 'anexo' = PDF ya generado que se reabrió
+async function enqueueFiles(files, dest = 'acta') { for (const f of files) scanQueue.push({ f, dest }); if (!$('#scanModal').classList.contains('on')) nextScan(); }
 async function nextScan() {
-  const f = scanQueue.shift(); if (!f) return;
+  const it = scanQueue.shift(); if (!it) return;
+  scan.dest = it.dest;
   busy(true, 'Cargando imagen…');
-  try { scan.img = await loadImageFile(f); } catch (e) { busy(false); toast('No se pudo abrir la imagen'); return nextScan(); }
+  try { scan.img = await loadImageFile(it.f); } catch (e) { busy(false); toast('No se pudo abrir la imagen'); return nextScan(); }
   busy(false);
   scan.corners = autoCorners(scan.img);
   $('#scanModal').classList.add('on');
@@ -811,8 +881,12 @@ function rotateScan() {
   scan.img = r; drawScan();
 }
 function renderThumbs() {
-  const c = $('#thumbs'); c.innerHTML = '';
   $('#scanCount').textContent = scans.length ? scans.length : '';
+  pintarHojas($('#thumbs'), scans, () => { renderThumbs(); saveScans(); });
+  if (anexo) pintarHojas($('#anxThumbs'), anexo.scans, renderAnexo);
+}
+function pintarHojas(c, scans, cambio) {
+  c.innerHTML = '';
   scans.forEach((s, i) => {
     const d = document.createElement('div'); d.className = 'thumb';
     d.innerHTML = `<span class="pg">Hoja ${i + 1}</span><img alt="Hoja ${i + 1}" src="${s.data}"><div class="tb"><button data-a="up" aria-label="Mover antes">◀</button><button data-a="dn" aria-label="Mover después">▶</button><button data-a="del" aria-label="Eliminar">🗑️</button></div>`;
@@ -821,7 +895,7 @@ function renderThumbs() {
       if (a === 'del') { if (!(await ask(`¿Eliminar la hoja ${i + 1}?`, 'Eliminar'))) return; scans.splice(i, 1); }
       if (a === 'up' && i > 0) [scans[i - 1], scans[i]] = [scans[i], scans[i - 1]];
       if (a === 'dn' && i < scans.length - 1) [scans[i + 1], scans[i]] = [scans[i], scans[i + 1]];
-      renderThumbs(); saveScans();
+      cambio();
     });
     c.appendChild(d);
   });
@@ -1120,8 +1194,14 @@ function ask(msg, okTxt = 'Sí, continuar') {
   renderTemas(); renderComps(); renderSig(); renderThumbs(); updateDevMeter();
   document.querySelectorAll('[data-k]').forEach(el => el.addEventListener('input', () => { saveDraft(); if (el.id === 'desarrollo') updateDevMeter(); }));
 
-  $('#btnCam').onclick = () => $('#fileCam').click();
-  $('#btnCamBar').onclick = () => $('#fileCam').click();
+  $('#btnCam').onclick = () => { camDest = 'acta'; $('#fileCam').click(); };
+  $('#btnCamBar').onclick = () => { camDest = 'acta'; $('#fileCam').click(); };
+  $('#btnAnxCam').onclick = () => { camDest = 'anexo'; $('#fileCam').click(); };
+  $('#btnAnxGal').onclick = () => { camDest = 'anexo'; $('#fileGal').click(); };
+  $('#btnReopen').onclick = () => $('#filePdf').click();
+  $('#filePdf').onchange = e => { abrirPdf(e.target.files[0]); e.target.value = ''; };
+  $('#btnAnxPdf').onclick = pdfConAnexos;
+  $('#btnAnxClose').onclick = async () => { if (anexo && anexo.scans.length && !(await ask('¿Cerrar el PDF y descartar las hojas escaneadas que aún no se agregaron?', 'Cerrar'))) return; anexo = null; renderAnexo(); };
   renderDir();
   $('#dirEdit').onclick = () => dirForm(true);
   $('#dirCancel').onclick = () => dirForm(false);
@@ -1175,9 +1255,9 @@ function ask(msg, okTxt = 'Sí, continuar') {
   $('#btnInstall').onclick = async () => { if (!bip) return; bip.prompt(); try { const r = await bip.userChoice; if (r && r.outcome === 'accepted') lsSet(NO_INST_KEY, true); } catch (e) {} bip = null; renderInstall(); };
   $('#instClose').onclick = () => { lsSet(NO_INST_KEY, true); renderInstall(); };
   $('#instShow').onclick = e => { e.preventDefault(); renderInstall(true); window.scrollTo({ top: 0, behavior: 'smooth' }); };
-  $('#btnGal').onclick = () => $('#fileGal').click();
-  $('#fileCam').onchange = e => { enqueueFiles([...e.target.files]); e.target.value = ''; };
-  $('#fileGal').onchange = e => { enqueueFiles([...e.target.files]); e.target.value = ''; };
+  $('#btnGal').onclick = () => { camDest = 'acta'; $('#fileGal').click(); };
+  $('#fileCam').onchange = e => { enqueueFiles([...e.target.files], camDest); e.target.value = ''; };
+  $('#fileGal').onchange = e => { enqueueFiles([...e.target.files], camDest); e.target.value = ''; };
 
   const scv = $('#scanCanvas');
   scv.addEventListener('pointerdown', e => { const p = scanPt(e), tol = 34 / scan.view.s; let bi = -1, bd = Infinity; scan.corners.forEach((c, i) => { const dd = Math.hypot(c.x - p.x, c.y - p.y); if (dd < bd) { bd = dd; bi = i; } }); if (bd < tol * 2.2) { scan.drag = bi; scv.setPointerCapture(e.pointerId); } });
@@ -1191,7 +1271,11 @@ function ask(msg, okTxt = 'Sí, continuar') {
   $('#scanOk').onclick = () => {
     busy(true, 'Procesando hoja…');
     setTimeout(async () => {
-      try { const c = warpAndFilter(); scans.push({ id: Date.now(), data: c.toDataURL('image/jpeg', 0.82), w: c.width, h: c.height }); renderThumbs(); await saveScans(); toast(`Hoja ${scans.length} agregada`); }
+      try {
+        const c = warpAndFilter(), hoja = { id: Date.now(), data: c.toDataURL('image/jpeg', 0.82), w: c.width, h: c.height };
+        if (scan.dest === 'anexo' && anexo) { anexo.scans.push(hoja); renderAnexo(); toast(`Hoja ${anexo.scans.length} lista para agregar al PDF`); }
+        else { scans.push(hoja); renderThumbs(); await saveScans(); toast(`Hoja ${scans.length} agregada`); }
+      }
       catch (e) { console.error(e); toast('No se pudo procesar la imagen'); }
       busy(false); $('#scanModal').classList.remove('on'); scan.img = null; nextScan();
     }, 30);
