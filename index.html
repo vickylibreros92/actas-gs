@@ -127,8 +127,7 @@
     <button type="button" id="instClose" aria-label="Cerrar" style="border:0;background:none;font-size:20px;color:var(--mut);padding:0 2px;cursor:pointer">✕</button>
   </div></section>
   <section class="card"><h2><span class="n">1</span>Datos generales</h2><div class="body">
-    <div class="row">
-      <div><label for="no">Acta No.</label><input id="no" data-k="no" inputmode="numeric" placeholder="Ej: 015"></div>
+    <div>
       <div><label for="fecha">Fecha</label><div style="display:flex;gap:6px;position:relative"><input id="fecha" data-k="fecha" inputmode="numeric" placeholder="dd/mm/aaaa" maxlength="10" autocomplete="off"><button class="btn g sm" id="fechaCal" type="button" aria-label="Elegir en calendario" style="flex:0 0 auto">📅</button><input type="date" id="fechaPick" tabindex="-1" aria-hidden="true" style="position:absolute;right:0;bottom:0;width:44px;height:40px;opacity:0;pointer-events:none"></div></div>
     </div>
     <label for="asunto">Asunto</label><input id="asunto" data-k="asunto">
@@ -296,7 +295,7 @@
 <div class="toast" id="toast"></div>
 
 <script src="pdf-lib.min.js"></script>
-<script>window.APP_WEB=true;window.APP_VERSION='20261106081717';</script>
+<script>window.APP_WEB=true;window.APP_VERSION='20261106082702';</script>
 <script src="envio-core.js"></script>
 <script>
 'use strict';
@@ -389,7 +388,7 @@ const fmtHora = v => {
   let [h, m] = v.split(':').map(Number); const ap = h >= 12 ? 'p. m.' : 'a. m.'; h = h % 12 || 12;
   return `${h}:${String(m).padStart(2, '0')} ${ap}`;
 };
-const F = k => (document.querySelector(`[data-k="${k}"]`).value || '').trim();
+const F = k => { const el = document.querySelector(`[data-k="${k}"]`); return el ? (el.value || '').trim() : ''; };
 
 /* ================================================================
    GENERACIÓN DEL PDF sobre la plantilla original GAM-F-006
@@ -981,7 +980,11 @@ function renderInstall(forzar) {
 
 /* ---------------- Resultado ---------------- */
 let lastPdf = null;
-const fileName = () => { const no = F('no').replace(/[^\w-]+/g, '') || 'sn'; const f = (F('fecha') || fmtFecha(new Date().toISOString().slice(0, 10))).replace(/[^\w-]+/g, '-'); return `GAM-F-006_Acta_${no}_${f}.pdf`; };
+const fileName = () => {
+  const f = (F('fecha') || fmtFecha(new Date().toISOString().slice(0, 10))).replace(/[^\w-]+/g, '-');
+  const a = F('asunto').normalize('NFD').replace(/[̀-ͯ]/g, '').replace(/[^\w]+/g, '_').replace(/^_+|_+$/g, '').slice(0, 40);
+  return `GAM-F-006_Acta_${f}${a ? '_' + a : ''}.pdf`;
+};
 async function doPdf() {
   busy(true, 'Generando PDF…');
   try {
@@ -1137,7 +1140,7 @@ function ask(msg, okTxt = 'Sí, continuar') {
   $('#btnPdf').onclick = doPdf;
   $('#btnDown').onclick = download;
   $('#btnOpen').onclick = () => { if (lastPdf) window.open(URL.createObjectURL(lastPdf), '_blank'); };
-  $('#btnShare').onclick = async () => { try { await navigator.share({ files: [lastPdf], title: lastPdf.name, text: `Acta reuniones externas No. ${F('no')}` }); } catch (e) { if (e.name !== 'AbortError') download(); } };
+  $('#btnShare').onclick = async () => { try { await navigator.share({ files: [lastPdf], title: lastPdf.name, text: `Acta reuniones externas ${F('fecha')}${F('asunto') ? ' - ' + F('asunto') : ''}` }); } catch (e) { if (e.name !== 'AbortError') download(); } };
   $('#btnNew').onclick = async () => {
     if (!(await ask('¿Borrar todos los datos, la firma y los escaneos para comenzar una nueva acta?', 'Borrar todo'))) return;
     try { localStorage.removeItem('actaGAM006'); } catch (e) {} await idb.del('scans').catch(() => {}); location.reload();
